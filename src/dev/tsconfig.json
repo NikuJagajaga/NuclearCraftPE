@@ -1,0 +1,76 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "lib": [
+            "ESNext"
+        ],
+        "strict": false,
+        "skipLibCheck": true,
+        "outFile": "../main.js",
+        "newLine": "LF",
+        "experimentalDecorators":true
+    },
+    "include": [
+
+        "header.ts",
+        "config.ts",
+
+        "api/NCItem.ts",
+        "api/MachineRegistry.ts",
+        "api/WindowMaker.ts",
+        "api/FluidRegistry.ts",
+
+        "machine/MachineBase.ts",
+        "machine/GeneratorBase.ts",
+        "machine/ProcessorBase.ts",
+
+        "machine/processor/TileProcessor.ts",
+        "machine/processor/ProcessorWindowMaker.ts",
+        "machine/processor/ProcessorInterface.ts",
+        "machine/processor/ProcessorRecipeHandler.ts",
+        "machine/processor/ProcessorRegistry.ts",
+
+        "resource/FissionMaterial.ts",
+        "resource/FissionFuel.ts",
+        "resource/base.ts",
+        "resource/component.ts",
+        "resource/ore.ts",
+        "resource/fluid.ts",
+
+        "machine/fission/ReactorPart.ts",
+        "machine/fission/ReactorDesign.ts",
+        "machine/fission/controller.ts",
+
+        "machine/generator/decay.ts",
+        "machine/generator/rtg.ts",
+        "machine/generator/solar.ts",
+
+        "machine/furnace.ts",
+
+        "machine/processor/define.ts",
+        "machine/processor/recipe/*",
+
+        "machine/battery/TileBattery.ts",
+        "machine/battery/define.ts",
+
+        "machine/passive/PassiveItemGenerator.ts",
+        "machine/passive/PassiveFluidGenerator.ts",
+        "machine/passive/define.ts",
+
+        "recipe_viewer.ts"
+
+    ],
+    "files": [
+        "../../declarations/android-declarations.d.ts",
+        "../../declarations/android.d.ts",
+        "../../declarations/core-engine.d.ts",
+        "../../declarations/BlockEngine.d.ts",
+        "../../declarations/energy-net.d.ts",
+        "../../declarations/TileRender.d.ts",
+        "../../declarations/StorageInterface.d.ts",
+        "../../declarations/VanillaSlots.d.ts",
+        "../../declarations/RecipeViewer.d.ts",
+        "../../declarations/ConnectedTexture.d.ts",
+        "../../declarations/EnhancedRecipes.d.ts"
+    ]
+}

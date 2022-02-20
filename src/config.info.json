@@ -1,0 +1,308 @@
+{
+    "properties": {
+        "enabled": {
+            "name": {"en": "Enable mod"},
+            "index": 0
+        },
+        "SlotsLikeVanilla": {
+            "name": {"en": "Slots Like Vanilla"},
+            "index": 1
+        },
+        "ore_copper": {
+            "name": {"en": "Copper Ore Setting"},
+            "collapsible": true,
+            "index": 2
+        },
+        "ore_tin": {
+            "name": {"en": "Tin Ore Setting"},
+            "collapsible": true,
+            "index": 3
+        },
+        "ore_lead": {
+            "name": {"en": "Lead Ore Setting"},
+            "collapsible": true,
+            "index": 4
+        },
+        "ore_thorium": {
+            "name": {"en": "Thorium Ore Setting"},
+            "collapsible": true,
+            "index": 5
+        },
+        "ore_uranium": {
+            "name": {"en": "Uranium Ore Setting"},
+            "collapsible": true,
+            "index": 6
+        },
+        "ore_boron": {
+            "name": {"en": "Boron Ore Setting"},
+            "collapsible": true,
+            "index": 7
+        },
+        "ore_lithium": {
+            "name": {"en": "Lithium Ore Setting"},
+            "collapsible": true,
+            "index": 8
+        },
+        "ore_magnesium": {
+            "name": {"en": "Magnesium Ore Setting"},
+            "collapsible": true,
+            "index": 9
+        },
+        "ore_copper.enabled": {
+            "name": {"en": "Enable"},
+            "index": 10
+        },
+        "ore_copper.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 11,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_copper.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 12,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_copper.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 13,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_copper.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 14,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_tin.enabled": {
+            "name": {"en": "Enable"},
+            "index": 15
+        },
+        "ore_tin.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 16,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_tin.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 17,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_tin.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 18,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_tin.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 19,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_lead.enabled": {
+            "name": {"en": "Enable"},
+            "index": 20
+        },
+        "ore_lead.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 21,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_lead.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 22,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_lead.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 23,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_lead.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 24,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_thorium.enabled": {
+            "name": {"en": "Enable"},
+            "index": 25
+        },
+        "ore_thorium.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 26,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_thorium.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 27,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_thorium.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 28,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_thorium.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 29,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_uranium.enabled": {
+            "name": {"en": "Enable"},
+            "index": 30
+        },
+        "ore_uranium.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 31,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_uranium.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 32,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_uranium.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 33,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_uranium.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 34,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_boron.enabled": {
+            "name": {"en": "Enable"},
+            "index": 35
+        },
+        "ore_boron.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 36,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_boron.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 37,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_boron.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 38,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_boron.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 39,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_lithium.enabled": {
+            "name": {"en": "Enable"},
+            "index": 40
+        },
+        "ore_lithium.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 41,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_lithium.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 42,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_lithium.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 43,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_lithium.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 44,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_magnesium.enabled": {
+            "name": {"en": "Enable"},
+            "index": 45
+        },
+        "ore_magnesium.rate": {
+            "name": {"en": "Ore Vein Count per Chunk"},
+            "index": 46,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 10
+        },
+        "ore_magnesium.size": {
+            "name": {"en": "Ore Vein Size"},
+            "index": 47,
+            "type": "SeekBar",
+            "min": 1,
+            "max": 20
+        },
+        "ore_magnesium.minY": {
+            "name": {"en": "Minimum Heights"},
+            "index": 48,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        },
+        "ore_magnesium.maxY": {
+            "name": {"en": "Maximum Heights"},
+            "index": 49,
+            "type": "SeekBar",
+            "min": 0,
+            "max": 128
+        }
+    }
+}

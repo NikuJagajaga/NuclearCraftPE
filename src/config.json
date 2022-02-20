@@ -1,0 +1,60 @@
+{
+    "enabled": true,
+    "SlotsLikeVanilla": false,
+    "ore_copper": {
+        "enabled": true,
+        "rate": 5,
+        "size": 6,
+        "minY": 0,
+        "maxY": 48
+    },
+    "ore_tin": {
+        "enabled": true,
+        "rate": 4,
+        "size": 6,
+        "minY": 0,
+        "maxY": 40
+    },
+    "ore_lead": {
+        "enabled": true,
+        "rate": 6,
+        "size": 6,
+        "minY": 0,
+        "maxY": 36
+    },
+    "ore_thorium": {
+        "enabled": true,
+        "rate": 4,
+        "size": 4,
+        "minY": 0,
+        "maxY": 32
+    },
+    "ore_uranium": {
+        "enabled": true,
+        "rate": 4,
+        "size": 4,
+        "minY": 0,
+        "maxY": 32
+    },
+    "ore_boron": {
+        "enabled": true,
+        "rate": 6,
+        "size": 5,
+        "minY": 0,
+        "maxY": 28
+    },
+    "ore_lithium": {
+        "enabled": true,
+        "rate": 6,
+        "size": 5,
+        "minY": 0,
+        "maxY": 28
+    },
+    "ore_magnesium": {
+        "enabled": true,
+        "rate": 4,
+        "size": 5,
+        "minY": 0,
+        "maxY": 24
+    }
+}
