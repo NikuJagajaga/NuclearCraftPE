@@ -24,59 +24,59 @@ namespace NCConfig {
     }
 
     export const ore_copper: OreProperty = {
-        enabled: __config__.getBool("ore.copper.enabled"),
-        rate: __config__.getNumber("ore.copper.rate").intValue(),
-        size: __config__.getNumber("ore.copper.size").intValue(),
-        minY: __config__.getNumber("ore.copper.minY").intValue(),
-        maxY: __config__.getNumber("ore.copper.maxY").intValue()
+        enabled: __config__.getBool("ore_copper.enabled"),
+        rate: __config__.getNumber("ore_copper.rate").intValue(),
+        size: __config__.getNumber("ore_copper.size").intValue(),
+        minY: __config__.getNumber("ore_copper.minY").intValue(),
+        maxY: __config__.getNumber("ore_copper.maxY").intValue()
     };
     export const ore_tin: OreProperty = {
-        enabled: __config__.getBool("ore.tin.enabled"),
-        rate: __config__.getNumber("ore.tin.rate").intValue(),
-        size: __config__.getNumber("ore.tin.size").intValue(),
-        minY: __config__.getNumber("ore.tin.minY").intValue(),
-        maxY: __config__.getNumber("ore.tin.maxY").intValue()
+        enabled: __config__.getBool("ore_tin.enabled"),
+        rate: __config__.getNumber("ore_tin.rate").intValue(),
+        size: __config__.getNumber("ore_tin.size").intValue(),
+        minY: __config__.getNumber("ore_tin.minY").intValue(),
+        maxY: __config__.getNumber("ore_tin.maxY").intValue()
     };
     export const ore_lead: OreProperty = {
-        enabled: __config__.getBool("ore.lead.enabled"),
-        rate: __config__.getNumber("ore.lead.rate").intValue(),
-        size: __config__.getNumber("ore.lead.size").intValue(),
-        minY: __config__.getNumber("ore.lead.minY").intValue(),
-        maxY: __config__.getNumber("ore.lead.maxY").intValue()
+        enabled: __config__.getBool("ore_lead.enabled"),
+        rate: __config__.getNumber("ore_lead.rate").intValue(),
+        size: __config__.getNumber("ore_lead.size").intValue(),
+        minY: __config__.getNumber("ore_lead.minY").intValue(),
+        maxY: __config__.getNumber("ore_lead.maxY").intValue()
     };
     export const ore_thorium: OreProperty = {
-        enabled: __config__.getBool("ore.thorium.enabled"),
-        rate: __config__.getNumber("ore.thorium.rate").intValue(),
-        size: __config__.getNumber("ore.thorium.size").intValue(),
-        minY: __config__.getNumber("ore.thorium.minY").intValue(),
-        maxY: __config__.getNumber("ore.thorium.maxY").intValue()
+        enabled: __config__.getBool("ore_thorium.enabled"),
+        rate: __config__.getNumber("ore_thorium.rate").intValue(),
+        size: __config__.getNumber("ore_thorium.size").intValue(),
+        minY: __config__.getNumber("ore_thorium.minY").intValue(),
+        maxY: __config__.getNumber("ore_thorium.maxY").intValue()
     };
     export const ore_uranium: OreProperty = {
-        enabled: __config__.getBool("ore.uranium.enabled"),
-        rate: __config__.getNumber("ore.uranium.rate").intValue(),
-        size: __config__.getNumber("ore.uranium.size").intValue(),
-        minY: __config__.getNumber("ore.uranium.minY").intValue(),
-        maxY: __config__.getNumber("ore.uranium.maxY").intValue()
+        enabled: __config__.getBool("ore_uranium.enabled"),
+        rate: __config__.getNumber("ore_uranium.rate").intValue(),
+        size: __config__.getNumber("ore_uranium.size").intValue(),
+        minY: __config__.getNumber("ore_uranium.minY").intValue(),
+        maxY: __config__.getNumber("ore_uranium.maxY").intValue()
     };
     export const ore_boron: OreProperty = {
-        enabled: __config__.getBool("ore.boron.enabled"),
-        rate: __config__.getNumber("ore.boron.rate").intValue(),
-        size: __config__.getNumber("ore.boron.size").intValue(),
-        minY: __config__.getNumber("ore.boron.minY").intValue(),
-        maxY: __config__.getNumber("ore.boron.maxY").intValue()
+        enabled: __config__.getBool("ore_boron.enabled"),
+        rate: __config__.getNumber("ore_boron.rate").intValue(),
+        size: __config__.getNumber("ore_boron.size").intValue(),
+        minY: __config__.getNumber("ore_boron.minY").intValue(),
+        maxY: __config__.getNumber("ore_boron.maxY").intValue()
     };
     export const ore_lithium: OreProperty = {
-        enabled: __config__.getBool("ore.lithium.enabled"),
-        rate: __config__.getNumber("ore.lithium.rate").intValue(),
-        size: __config__.getNumber("ore.lithium.size").intValue(),
-        minY: __config__.getNumber("ore.lithium.minY").intValue(),
-        maxY: __config__.getNumber("ore.lithium.maxY").intValue()
+        enabled: __config__.getBool("ore_lithium.enabled"),
+        rate: __config__.getNumber("ore_lithium.rate").intValue(),
+        size: __config__.getNumber("ore_lithium.size").intValue(),
+        minY: __config__.getNumber("ore_lithium.minY").intValue(),
+        maxY: __config__.getNumber("ore_lithium.maxY").intValue()
     };
     export const ore_magnesium: OreProperty = {
-        enabled: __config__.getBool("ore.magnesium.enabled"),
-        rate: __config__.getNumber("ore.magnesium.rate").intValue(),
-        size: __config__.getNumber("ore.magnesium.size").intValue(),
-        minY: __config__.getNumber("ore.magnesium.minY").intValue(),
-        maxY: __config__.getNumber("ore.magnesium.maxY").intValue()
+        enabled: __config__.getBool("ore_magnesium.enabled"),
+        rate: __config__.getNumber("ore_magnesium.rate").intValue(),
+        size: __config__.getNumber("ore_magnesium.size").intValue(),
+        minY: __config__.getNumber("ore_magnesium.minY").intValue(),
+        maxY: __config__.getNumber("ore_magnesium.maxY").intValue()
     };
 };

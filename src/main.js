@@ -95,60 +95,60 @@ var NCConfig;
 (function (NCConfig) {
     NCConfig.SlotsLikeVanilla = __config__.getBool("SlotsLikeVanilla");
     NCConfig.ore_copper = {
-        enabled: __config__.getBool("ore.copper.enabled"),
-        rate: __config__.getNumber("ore.copper.rate").intValue(),
-        size: __config__.getNumber("ore.copper.size").intValue(),
-        minY: __config__.getNumber("ore.copper.minY").intValue(),
-        maxY: __config__.getNumber("ore.copper.maxY").intValue()
+        enabled: __config__.getBool("ore_copper.enabled"),
+        rate: __config__.getNumber("ore_copper.rate").intValue(),
+        size: __config__.getNumber("ore_copper.size").intValue(),
+        minY: __config__.getNumber("ore_copper.minY").intValue(),
+        maxY: __config__.getNumber("ore_copper.maxY").intValue()
     };
     NCConfig.ore_tin = {
-        enabled: __config__.getBool("ore.tin.enabled"),
-        rate: __config__.getNumber("ore.tin.rate").intValue(),
-        size: __config__.getNumber("ore.tin.size").intValue(),
-        minY: __config__.getNumber("ore.tin.minY").intValue(),
-        maxY: __config__.getNumber("ore.tin.maxY").intValue()
+        enabled: __config__.getBool("ore_tin.enabled"),
+        rate: __config__.getNumber("ore_tin.rate").intValue(),
+        size: __config__.getNumber("ore_tin.size").intValue(),
+        minY: __config__.getNumber("ore_tin.minY").intValue(),
+        maxY: __config__.getNumber("ore_tin.maxY").intValue()
     };
     NCConfig.ore_lead = {
-        enabled: __config__.getBool("ore.lead.enabled"),
-        rate: __config__.getNumber("ore.lead.rate").intValue(),
-        size: __config__.getNumber("ore.lead.size").intValue(),
-        minY: __config__.getNumber("ore.lead.minY").intValue(),
-        maxY: __config__.getNumber("ore.lead.maxY").intValue()
+        enabled: __config__.getBool("ore_lead.enabled"),
+        rate: __config__.getNumber("ore_lead.rate").intValue(),
+        size: __config__.getNumber("ore_lead.size").intValue(),
+        minY: __config__.getNumber("ore_lead.minY").intValue(),
+        maxY: __config__.getNumber("ore_lead.maxY").intValue()
     };
     NCConfig.ore_thorium = {
-        enabled: __config__.getBool("ore.thorium.enabled"),
-        rate: __config__.getNumber("ore.thorium.rate").intValue(),
-        size: __config__.getNumber("ore.thorium.size").intValue(),
-        minY: __config__.getNumber("ore.thorium.minY").intValue(),
-        maxY: __config__.getNumber("ore.thorium.maxY").intValue()
+        enabled: __config__.getBool("ore_thorium.enabled"),
+        rate: __config__.getNumber("ore_thorium.rate").intValue(),
+        size: __config__.getNumber("ore_thorium.size").intValue(),
+        minY: __config__.getNumber("ore_thorium.minY").intValue(),
+        maxY: __config__.getNumber("ore_thorium.maxY").intValue()
     };
     NCConfig.ore_uranium = {
-        enabled: __config__.getBool("ore.uranium.enabled"),
-        rate: __config__.getNumber("ore.uranium.rate").intValue(),
-        size: __config__.getNumber("ore.uranium.size").intValue(),
-        minY: __config__.getNumber("ore.uranium.minY").intValue(),
-        maxY: __config__.getNumber("ore.uranium.maxY").intValue()
+        enabled: __config__.getBool("ore_uranium.enabled"),
+        rate: __config__.getNumber("ore_uranium.rate").intValue(),
+        size: __config__.getNumber("ore_uranium.size").intValue(),
+        minY: __config__.getNumber("ore_uranium.minY").intValue(),
+        maxY: __config__.getNumber("ore_uranium.maxY").intValue()
     };
     NCConfig.ore_boron = {
-        enabled: __config__.getBool("ore.boron.enabled"),
-        rate: __config__.getNumber("ore.boron.rate").intValue(),
-        size: __config__.getNumber("ore.boron.size").intValue(),
-        minY: __config__.getNumber("ore.boron.minY").intValue(),
-        maxY: __config__.getNumber("ore.boron.maxY").intValue()
+        enabled: __config__.getBool("ore_boron.enabled"),
+        rate: __config__.getNumber("ore_boron.rate").intValue(),
+        size: __config__.getNumber("ore_boron.size").intValue(),
+        minY: __config__.getNumber("ore_boron.minY").intValue(),
+        maxY: __config__.getNumber("ore_boron.maxY").intValue()
     };
     NCConfig.ore_lithium = {
-        enabled: __config__.getBool("ore.lithium.enabled"),
-        rate: __config__.getNumber("ore.lithium.rate").intValue(),
-        size: __config__.getNumber("ore.lithium.size").intValue(),
-        minY: __config__.getNumber("ore.lithium.minY").intValue(),
-        maxY: __config__.getNumber("ore.lithium.maxY").intValue()
+        enabled: __config__.getBool("ore_lithium.enabled"),
+        rate: __config__.getNumber("ore_lithium.rate").intValue(),
+        size: __config__.getNumber("ore_lithium.size").intValue(),
+        minY: __config__.getNumber("ore_lithium.minY").intValue(),
+        maxY: __config__.getNumber("ore_lithium.maxY").intValue()
     };
     NCConfig.ore_magnesium = {
-        enabled: __config__.getBool("ore.magnesium.enabled"),
-        rate: __config__.getNumber("ore.magnesium.rate").intValue(),
-        size: __config__.getNumber("ore.magnesium.size").intValue(),
-        minY: __config__.getNumber("ore.magnesium.minY").intValue(),
-        maxY: __config__.getNumber("ore.magnesium.maxY").intValue()
+        enabled: __config__.getBool("ore_magnesium.enabled"),
+        rate: __config__.getNumber("ore_magnesium.rate").intValue(),
+        size: __config__.getNumber("ore_magnesium.size").intValue(),
+        minY: __config__.getNumber("ore_magnesium.minY").intValue(),
+        maxY: __config__.getNumber("ore_magnesium.maxY").intValue()
     };
 })(NCConfig || (NCConfig = {}));
 ;
@@ -3787,14 +3787,12 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
     var FissionRecipeType = /** @class */ (function (_super) {
         __extends(FissionRecipeType, _super);
         function FissionRecipeType() {
-            var _this = this;
             var winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold");
             winMaker.addSlot("input0", 55, 34, 18, "nc.slot_dark");
             winMaker.addSlot("output0", 111, 30, 26, "nc.slot_dark_large");
             winMaker.addDrawing({ type: "bitmap", x: 74, y: 35, bitmap: "nc.prog_fission" });
             winMaker.addElements("textInfo", { type: "text", x: 37, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 40 }, multiline: true });
-            _this = _super.call(this, "Fission Reactor", NCID.fission_controller, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
-            return _this;
+            return _super.call(this, "Fission Reactor", NCID.fission_controller, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
         }
         FissionRecipeType.prototype.getAllList = function () {
             return FissionFuel.getAllListForRV();
@@ -3808,14 +3806,12 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
     var DecayGeneratorRecipeType = /** @class */ (function (_super) {
         __extends(DecayGeneratorRecipeType, _super);
         function DecayGeneratorRecipeType() {
-            var _this = this;
             var winMaker = new NCWindowMaker("Decay Generator", 176, 86);
             winMaker.addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener");
             winMaker.addSlot("input0", 55, 34, 18, "nc.slot_input");
             winMaker.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
             winMaker.addElements("textInfo", { type: "text", x: 55, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 40 }, multiline: true });
-            _this = _super.call(this, "Decay Generator", NCID.decay_generator, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
-            return _this;
+            return _super.call(this, "Decay Generator", NCID.decay_generator, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
         }
         DecayGeneratorRecipeType.prototype.getAllList = function () {
             var list = [];
