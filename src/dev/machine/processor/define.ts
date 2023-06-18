@@ -21,216 +21,216 @@ ProcessorRegistry.createMachine("rock_crusher", "Rock Crusher", [1, 0, 3, 0], "S
 
 namespace NCWindow {
 
-    export const Manufactory = new ProcessorWindowMaker("Manufactory");
-    Manufactory.addScale("scaleProgress", 74, 35, "nc.prog_manufactory_bg", "nc.prog_manufactory");
-    Manufactory.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    Manufactory.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    Manufactory.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "manufactory");
-        }
-    });
+    export const Manufactory = new ProcessorWindowMaker("Manufactory")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_manufactory_bg", "nc.prog_manufactory")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "manufactory");
+            }
+        });
 
-    export const IsotopeSeparator = new ProcessorWindowMaker("Isotope Separator");
-    IsotopeSeparator.addScale("scaleProgress", 60, 34, "nc.prog_isotope_separator_bg", "nc.prog_isotope_separator");
-    IsotopeSeparator.addSlot("input0", 41, 34, 18, "nc.slot_input");
-    IsotopeSeparator.addSlot("output0", 97, 30, 26, "nc.slot_output_large");
-    IsotopeSeparator.addSlot("output1", 125, 30, 26, "nc.slot_output_large");
-    IsotopeSeparator.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "isotope_separator");
-        }
-    });
+    export const IsotopeSeparator = new ProcessorWindowMaker("Isotope Separator")
+        .addProgressBar("scaleProgress", 60, 34, "nc.prog_isotope_separator_bg", "nc.prog_isotope_separator")
+        .addSlot("input0", 41, 34, 18, "nc.slot_input")
+        .addSlot("output0", 97, 30, 26, "nc.slot_output_large")
+        .addSlot("output1", 125, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "isotope_separator");
+            }
+        });
 
-    export const DecayHastener = new ProcessorWindowMaker("Decay Hastener");
-    DecayHastener.addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener");
-    DecayHastener.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    DecayHastener.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    DecayHastener.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "decay_hastener");
-        }
-    });
+    export const DecayHastener = new ProcessorWindowMaker("Decay Hastener")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "decay_hastener");
+            }
+        });
 
-    export const FuelReprocessor = new ProcessorWindowMaker("Fuel Reprocessor");
-    FuelReprocessor.addScale("scaleProgress", 68, 18, "nc.prog_fuel_reprocessor_bg", "nc.prog_fuel_reprocessor");
-    FuelReprocessor.addSlot("input0", 49, 28, 18, "nc.slot_input");
-    FuelReprocessor.addSlot("output0", 105, 18, 18, "nc.slot_output");
-    FuelReprocessor.addSlot("output1", 125, 18, 18, "nc.slot_output");
-    FuelReprocessor.addSlot("output2", 105, 38, 18, "nc.slot_output");
-    FuelReprocessor.addSlot("output3", 125, 38, 18, "nc.slot_output");
-    FuelReprocessor.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fuel_reprocessor");
-        }
-    });
+    export const FuelReprocessor = new ProcessorWindowMaker("Fuel Reprocessor")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_fuel_reprocessor_bg", "nc.prog_fuel_reprocessor")
+        .addSlot("input0", 49, 28, 18, "nc.slot_input")
+        .addSlot("output0", 105, 18, 18, "nc.slot_output")
+        .addSlot("output1", 125, 18, 18, "nc.slot_output")
+        .addSlot("output2", 105, 38, 18, "nc.slot_output")
+        .addSlot("output3", 125, 38, 18, "nc.slot_output")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fuel_reprocessor");
+            }
+        });
 
-    export const AlloyFurnace = new ProcessorWindowMaker("Alloy Furnace");
-    AlloyFurnace.addScale("scaleProgress", 84, 35, "nc.prog_alloy_furnace_bg", "nc.prog_alloy_furnace");
-    AlloyFurnace.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    AlloyFurnace.addSlot("input1", 65, 34, 18, "nc.slot_input");
-    AlloyFurnace.addSlot("output0", 121, 30, 26, "nc.slot_output_large");
-    AlloyFurnace.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "alloy_furnace");
-        }
-    });
+    export const AlloyFurnace = new ProcessorWindowMaker("Alloy Furnace")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_alloy_furnace_bg", "nc.prog_alloy_furnace")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addSlot("input1", 65, 34, 18, "nc.slot_input")
+        .addSlot("output0", 121, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "alloy_furnace");
+            }
+        });
 
-    export const FluidInfuser = new ProcessorWindowMaker("Fluid Infuser");
-    FluidInfuser.addScale("scaleProgress", 84, 35, "nc.prog_fluid_infuser_bg", "nc.prog_fluid_infuser");
-    FluidInfuser.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    FluidInfuser.addTank("inputLiq0", 65, 34, 18, "nc.tank_input");
-    FluidInfuser.addSlot("output0", 121, 30, 26, "nc.slot_output_large");
-    FluidInfuser.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_infuser");
-        }
-    });
+    export const FluidInfuser = new ProcessorWindowMaker("Fluid Infuser")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_fluid_infuser_bg", "nc.prog_fluid_infuser")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addTank("inputLiq0", 65, 34, 18, "nc.tank_input")
+        .addSlot("output0", 121, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_infuser");
+            }
+        });
 
-    export const Melter = new ProcessorWindowMaker("Melter");
-    Melter.addScale("scaleProgress", 74, 35, "nc.prog_melter_bg", "nc.prog_melter");
-    Melter.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    Melter.addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large");
-    Melter.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "melter");
-        }
-    });
+    export const Melter = new ProcessorWindowMaker("Melter")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_melter_bg", "nc.prog_melter")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "melter");
+            }
+        });
 
-    export const Supercooler = new ProcessorWindowMaker("Supercooler");
-    Supercooler.addScale("scaleProgress", 74, 35, "nc.prog_supercooler_bg", "nc.prog_supercooler");
-    Supercooler.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    Supercooler.addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large");
-    Supercooler.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "supercooler");
-        }
-    });
+    export const Supercooler = new ProcessorWindowMaker("Supercooler")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_supercooler_bg", "nc.prog_supercooler")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "supercooler");
+            }
+        });
 
-    export const Electrolyzer = new ProcessorWindowMaker("Electrolyzer");
-    Electrolyzer.addScale("scaleProgress", 68, 18, "nc.prog_electrolyzer_bg", "nc.prog_electrolyzer");
-    Electrolyzer.addTank("inputLiq0", 49, 28, 18, "nc.tank_input");
-    Electrolyzer.addTank("outputLiq0", 105, 18, 18, "nc.tank_output");
-    Electrolyzer.addTank("outputLiq1", 125, 18, 18, "nc.tank_output");
-    Electrolyzer.addTank("outputLiq2", 105, 38, 18, "nc.tank_output");
-    Electrolyzer.addTank("outputLiq3", 125, 38, 18, "nc.tank_output");
-    Electrolyzer.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "electrolyzer");
-        }
-    });
+    export const Electrolyzer = new ProcessorWindowMaker("Electrolyzer")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_electrolyzer_bg", "nc.prog_electrolyzer")
+        .addTank("inputLiq0", 49, 28, 18, "nc.tank_input")
+        .addTank("outputLiq0", 105, 18, 18, "nc.tank_output")
+        .addTank("outputLiq1", 125, 18, 18, "nc.tank_output")
+        .addTank("outputLiq2", 105, 38, 18, "nc.tank_output")
+        .addTank("outputLiq3", 125, 38, 18, "nc.tank_output")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "electrolyzer");
+            }
+        });
 
-    export const NeutronIrradiator = new ProcessorWindowMaker("Neutron Irradiator");
-    NeutronIrradiator.addScale("scaleProgress", 70, 35, "nc.prog_neutron_irradiator_bg", "nc.prog_neutron_irradiator");
-    NeutronIrradiator.addTank("inputLiq0", 31, 34, 18, "nc.tank_input");
-    NeutronIrradiator.addTank("inputLiq1", 51, 34, 18, "nc.tank_input");
-    NeutronIrradiator.addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large");
-    NeutronIrradiator.addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large");
-    NeutronIrradiator.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "neutron_irradiator");
-        }
-    });
+    export const NeutronIrradiator = new ProcessorWindowMaker("Neutron Irradiator")
+        .addProgressBar("scaleProgress", 70, 35, "nc.prog_neutron_irradiator_bg", "nc.prog_neutron_irradiator")
+        .addTank("inputLiq0", 31, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 51, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large")
+        .addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "neutron_irradiator");
+            }
+        });
 
-    export const IngotFormer = new ProcessorWindowMaker("Ingot Former");
-    IngotFormer.addScale("scaleProgress", 74, 35, "nc.prog_ingot_former_bg", "nc.prog_ingot_former");
-    IngotFormer.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    IngotFormer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    IngotFormer.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "ingot_former");
-        }
-    });
+    export const IngotFormer = new ProcessorWindowMaker("Ingot Former")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_ingot_former_bg", "nc.prog_ingot_former")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "ingot_former");
+            }
+        });
 
-    export const Pressurizer = new ProcessorWindowMaker("Pressurizer");
-    Pressurizer.addScale("scaleProgress", 74, 35, "nc.prog_pressurizer_bg", "nc.prog_pressurizer");
-    Pressurizer.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    Pressurizer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    Pressurizer.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "pressurizer");
-        }
-    });
+    export const Pressurizer = new ProcessorWindowMaker("Pressurizer")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_pressurizer_bg", "nc.prog_pressurizer")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "pressurizer");
+            }
+        });
 
-    export const ChemicalReactor = new ProcessorWindowMaker("Chemical Reactor");
-    ChemicalReactor.addScale("scaleProgress", 70, 34, "nc.prog_chemical_reactor_bg", "nc.prog_chemical_reactor");
-    ChemicalReactor.addTank("inputLiq0", 31, 34, 18, "nc.tank_input");
-    ChemicalReactor.addTank("inputLiq1", 51, 34, 18, "nc.tank_input");
-    ChemicalReactor.addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large");
-    ChemicalReactor.addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large");
-    ChemicalReactor.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "chemical_reactor");
-        }
-    });
+    export const ChemicalReactor = new ProcessorWindowMaker("Chemical Reactor")
+        .addProgressBar("scaleProgress", 70, 34, "nc.prog_chemical_reactor_bg", "nc.prog_chemical_reactor")
+        .addTank("inputLiq0", 31, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 51, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large")
+        .addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "chemical_reactor");
+            }
+        });
 
-    export const SaltMixer = new ProcessorWindowMaker("Salt Mixer");
-    SaltMixer.addScale("scaleProgress", 84, 34, "nc.prog_salt_mixer_bg", "nc.prog_salt_mixer");
-    SaltMixer.addTank("inputLiq0", 45, 34, 18, "nc.tank_input");
-    SaltMixer.addTank("inputLiq1", 65, 34, 18, "nc.tank_input");
-    SaltMixer.addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large");
-    SaltMixer.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "salt_mixer");
-        }
-    });
+    export const SaltMixer = new ProcessorWindowMaker("Salt Mixer")
+        .addProgressBar("scaleProgress", 84, 34, "nc.prog_salt_mixer_bg", "nc.prog_salt_mixer")
+        .addTank("inputLiq0", 45, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 65, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "salt_mixer");
+            }
+        });
 
-    export const Crystallizer = new ProcessorWindowMaker("Crystallizer");
-    Crystallizer.addScale("scaleProgress", 74, 35, "nc.prog_crystallizer_bg", "nc.prog_crystallizer");
-    Crystallizer.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    Crystallizer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    Crystallizer.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "crystallizer");
-        }
-    });
+    export const Crystallizer = new ProcessorWindowMaker("Crystallizer")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_crystallizer_bg", "nc.prog_crystallizer")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "crystallizer");
+            }
+        });
 
-    export const FluidEnricher = new ProcessorWindowMaker("Fluid Enricher");
-    FluidEnricher.addScale("scaleProgress", 84, 35, "nc.prog_fluid_enricher_bg", "nc.prog_fluid_enricher");
-    FluidEnricher.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    FluidEnricher.addTank("inputLiq0", 65, 34, 18, "nc.tank_input");
-    FluidEnricher.addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large");
-    FluidEnricher.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_enricher");
-        }
-    });
+    export const FluidEnricher = new ProcessorWindowMaker("Fluid Enricher")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_fluid_enricher_bg", "nc.prog_fluid_enricher")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addTank("inputLiq0", 65, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_enricher");
+            }
+        });
 
-    export const FluidExtractor = new ProcessorWindowMaker("Fluid Extractor");
-    FluidExtractor.addScale("scaleProgress", 60, 35, "nc.prog_fluid_extractor_bg", "nc.prog_fluid_extractor");
-    FluidExtractor.addSlot("input0", 41, 34, 18, "nc.slot_input");
-    FluidExtractor.addSlot("output0", 97, 30, 26, "nc.slot_output_large");
-    FluidExtractor.addTank("outputLiq0", 125, 30, 26, "nc.tank_output_large");
-    FluidExtractor.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_extractor");
-        }
-    });
+    export const FluidExtractor = new ProcessorWindowMaker("Fluid Extractor")
+        .addProgressBar("scaleProgress", 60, 35, "nc.prog_fluid_extractor_bg", "nc.prog_fluid_extractor")
+        .addSlot("input0", 41, 34, 18, "nc.slot_input")
+        .addSlot("output0", 97, 30, 26, "nc.slot_output_large")
+        .addTank("outputLiq0", 125, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_extractor");
+            }
+        });
 
-    export const Centrifuge = new ProcessorWindowMaker("Centrifuge");
-    Centrifuge.addScale("scaleProgress", 68, 18, "nc.prog_centrifuge_bg", "nc.prog_centrifuge");
-    Centrifuge.addTank("inputLiq0", 49, 28, 18, "nc.tank_input");
-    Centrifuge.addTank("outputLiq0", 105, 18, 18, "nc.tank_output");
-    Centrifuge.addTank("outputLiq1", 125, 18, 18, "nc.tank_output");
-    Centrifuge.addTank("outputLiq2", 105, 38, 18, "nc.tank_output");
-    Centrifuge.addTank("outputLiq3", 125, 38, 18, "nc.tank_output");
-    Centrifuge.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "centrifuge");
-        }
-    });
+    export const Centrifuge = new ProcessorWindowMaker("Centrifuge")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_centrifuge_bg", "nc.prog_centrifuge")
+        .addTank("inputLiq0", 49, 28, 18, "nc.tank_input")
+        .addTank("outputLiq0", 105, 18, 18, "nc.tank_output")
+        .addTank("outputLiq1", 125, 18, 18, "nc.tank_output")
+        .addTank("outputLiq2", 105, 38, 18, "nc.tank_output")
+        .addTank("outputLiq3", 125, 38, 18, "nc.tank_output")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "centrifuge");
+            }
+        });
 
-    export const RockCrusher = new ProcessorWindowMaker("Rock Crusher");
-    RockCrusher.addScale("scaleProgress", 56, 35, "nc.prog_rock_crusher_bg", "nc.prog_rock_crusher");
-    RockCrusher.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    RockCrusher.addSlot("output0", 93, 34, 18, "nc.slot_output");
-    RockCrusher.addSlot("output1", 113, 34, 18, "nc.slot_output");
-    RockCrusher.addSlot("output2", 133, 34, 18, "nc.slot_output");
-    RockCrusher.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "rock_crusher");
-        }
-    });
+    export const RockCrusher = new ProcessorWindowMaker("Rock Crusher")
+        .addProgressBar("scaleProgress", 56, 35, "nc.prog_rock_crusher_bg", "nc.prog_rock_crusher")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 93, 34, 18, "nc.slot_output")
+        .addSlot("output1", 113, 34, 18, "nc.slot_output")
+        .addSlot("output2", 133, 34, 18, "nc.slot_output")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "rock_crusher");
+            }
+        });
 
     ProcessorRegistry.registerWindow(NCID.manufactory, Manufactory.makeWindow());
     ProcessorRegistry.registerWindow(NCID.isotope_separator, IsotopeSeparator.makeWindow());

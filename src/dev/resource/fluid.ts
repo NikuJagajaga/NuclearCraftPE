@@ -24,6 +24,16 @@ Item.addCreativeGroup("nc_cell", "NC Cell", [
 ]);
 
 
+Callback.addCallback("PreLoaded", () => {
+
+    Recipes2.addShaped({id: NCID.cell_empty, count: 2}, "_a_:aba:_a_", {
+        a: NCID.bioplastic,
+        b: "glass_pane"
+    });
+
+});
+
+
 FluidRegistry.register("oxygen", "Oxygen", "GAS", "#7E8CC8");
 FluidRegistry.register("hydrogen", "Hydrogen", "GAS", "#B37AC4");
 FluidRegistry.register("deuterium", "Deuterium", "GAS", "#9E6FEF");

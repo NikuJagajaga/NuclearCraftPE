@@ -4,11 +4,27 @@ ModAPI.addAPICallback("RecipeViewer", (api: RecipeViewerAPI): void => {
 
     RV = api;
 
-    class ProcessorRecipeType extends api.RecipeType {
+    const RecipeType = api.RecipeType;
 
-        constructor(name: string, private blockID: number, content: UI.WindowContent){
-            super(name, blockID, content);
-            this.setTankLimit(16000);
+    class ProcessorRecipeType extends RecipeType {
+
+        constructor(name: string, private blockID: number, winMaker: ProcessorWindowMaker){
+            const recHandler = ProcessorRegistry.getRecipeHandler(blockID);
+            const input = [];
+            const output = [];
+            const inputLiq = [];
+            const outputLiq = [];
+            for(let i = 0; i < recHandler.inputSlotSize; i++) input.push("input" + i);
+            for(let i = 0; i < recHandler.outputSlotSize; i++) output.push("output" + i);
+            for(let i = 0; i < recHandler.inputTankSize; i++) inputLiq.push("inputLiq" + i);
+            for(let i = 0; i < recHandler.outputTankSize; i++) outputLiq.push("outputLiq" + i);
+            super(name, blockID, winMaker.getContentForRV({
+                input: input,
+                output: output,
+                inputLiq: inputLiq,
+                outputLiq: outputLiq
+            }, [...inputLiq, ...outputLiq, "scaleProgress"]));
+            this.setTankLimit(1000);
         }
 
         getAllList(): RecipePattern[] {
@@ -23,7 +39,7 @@ ModAPI.addAPICallback("RecipeViewer", (api: RecipeViewerAPI): void => {
 
 
     const register = (key: string, name: string, winMaker: ProcessorWindowMaker): void => {
-        api.RecipeTypeRegistry.register(NCItem.PREFIX + key, new ProcessorRecipeType(name, NCID[key], winMaker.getContentForRV()));
+        api.RecipeTypeRegistry.register(NCItem.PREFIX + key, new ProcessorRecipeType(name, NCID[key], winMaker));
     }
 
     register("manufactory", "Manufactory", NCWindow.Manufactory);
@@ -47,15 +63,18 @@ ModAPI.addAPICallback("RecipeViewer", (api: RecipeViewerAPI): void => {
     register("rock_crusher", "Rock Crusher", NCWindow.RockCrusher);
 
 
-    class FissionRecipeType extends api.RecipeType {
+    class FissionRecipeType extends RecipeType {
 
         constructor(){
-            const winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold");
-            winMaker.addSlot("input0", 55, 34, 18, "nc.slot_dark");
-            winMaker.addSlot("output0", 111, 30, 26, "nc.slot_dark_large");
-            winMaker.addDrawing({type: "bitmap", x: 74, y: 35, bitmap: "nc.prog_fission"});
-            winMaker.addElements("textInfo", {type: "text", x: 37, y: 60, font: {color: Color.WHITE, shadow: 0.5, size: 40}, multiline: true});
-            super("Fission Reactor", NCID.fission_controller, {drawing: winMaker.content.drawing, elements: winMaker.content.elements});
+            const winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold")
+                .addSlot("input0", 55, 34, 18, "nc.slot_dark")
+                .addSlot("output0", 111, 30, 26, "nc.slot_dark_large")
+                .addDrawing("scaleProgress", {type: "bitmap", x: 74, y: 35, bitmap: "nc.prog_fission"})
+                .addElements("textInfo", {type: "text", x: 37, y: 60, font: {color: Color.WHITE, shadow: 0.5, size: 6}, multiline: true});
+            super("Fission Reactor", NCID.fission_controller, winMaker.getContentForRV({
+                input: ["input0"],
+                output: ["output0"]
+            }, ["scaleProgress", "textInfo"]));
         }
 
         getAllList(): RecipePattern[] {
@@ -70,15 +89,18 @@ ModAPI.addAPICallback("RecipeViewer", (api: RecipeViewerAPI): void => {
     }
 
 
-    class DecayGeneratorRecipeType extends api.RecipeType {
+    class DecayGeneratorRecipeType extends RecipeType {
 
         constructor(){
-            const winMaker = new NCWindowMaker("Decay Generator", 176, 86);
-            winMaker.addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener");
-            winMaker.addSlot("input0", 55, 34, 18, "nc.slot_input");
-            winMaker.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-            winMaker.addElements("textInfo", {type: "text", x: 55, y: 60, font: {color: Color.WHITE, shadow: 0.5, size: 40}, multiline: true});
-            super("Decay Generator", NCID.decay_generator, {drawing: winMaker.content.drawing, elements: winMaker.content.elements});
+            const winMaker = new NCWindowMaker("Decay Generator", 176, 86)
+                .addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener")
+                .addSlot("input0", 55, 34, 18, "nc.slot_input")
+                .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+                .addElements("textInfo", {type: "text", x: 55, y: 60, font: {color: Color.WHITE, shadow: 0.5, size: 6}, multiline: true});
+            super("Decay Generator", NCID.decay_generator, winMaker.getContentForRV({
+                input: ["input0"],
+                output: ["output0"]
+            }, ["scaleProgress", "textInfo"]));
         }
 
         getAllList(): RecipePattern[] {
@@ -101,7 +123,7 @@ ModAPI.addAPICallback("RecipeViewer", (api: RecipeViewerAPI): void => {
     }
 
 
-    class FurnaceFuelRecipeType extends api.RecipeType {
+    class FurnaceFuelRecipeType extends RecipeType {
 
         constructor(){
             super("Nuclear Furnace Fuel", NCID.furnace, {

@@ -1,9 +1,12 @@
 class ProcessorInterface implements StorageDescriptor {
 
+    readonly liquidUnitRatio: number;
+
     slots: {[key: string]: SlotData};
     tileEntity: TileProcessor;
 
     constructor(inSlotSize: number, inTankSize: number, outSlotSize: number, outTankSize: number){
+        this.liquidUnitRatio = 0.001;
         this.slots = {};
         for(let i = 0; i < inSlotSize; i++){
             this.slots["input" + i] = {input: true};
@@ -37,6 +40,10 @@ class ProcessorInterface implements StorageDescriptor {
             }
         }
         return null;
+    }
+
+    canReceiveLiquid(liquid: string, side: number): boolean {
+        return true;
     }
 
 }

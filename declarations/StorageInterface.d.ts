@@ -38,13 +38,13 @@ interface SlotData {
     canOutput?(item: ItemInstance, side: number, tileEntity: TileEntity): boolean;
 }
 interface ILiquidStorage {
-    getLiquidStored(): string;
-    getLimit(liquid: string): number;
-    getAmount(liquid: string): number;
-    getLiquid(liquid: string, amount: number): number;
-    addLiquid(liquid: string, amount: number): number;
-    isFull(): boolean;
-    isEmpty(): boolean;
+	getLiquidStored(): string;
+	getLimit(liquid: string): number;
+	getAmount(liquid: string): number;
+	getLiquid(liquid: string, amount: number): number;
+	addLiquid(liquid: string, amount: number): number;
+	isFull(liquid?: string): boolean;
+	isEmpty(liquid?: string): boolean;
 }
 declare class NativeContainerInterface implements Storage {
     readonly container: NativeTileEntity;

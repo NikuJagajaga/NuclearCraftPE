@@ -58,6 +58,10 @@ abstract class MachineBase extends TileEntityBase {
         this.container.setScale(name, denominator ? numerator / denominator : 0);
     }
 
+    getScreenByName(screenName: string, container: ItemContainer): UI.IWindow {
+        return null;
+    }
+
     abstract canReceiveEnergy(side: number, type: string): boolean;
     abstract canExtractEnergy(side: number, type: string): boolean;
     abstract getEnergyStorage(): number;

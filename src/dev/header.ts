@@ -4,6 +4,7 @@ IMPORT("TileRender");
 IMPORT("StorageInterface");
 IMPORT("VanillaSlots");
 IMPORT("ConnectedTexture");
+IMPORT("WindowMaker");
 IMPORT("EnhancedRecipes");
 
 const Color = android.graphics.Color;
@@ -23,6 +24,17 @@ const isItemInstance = (a): a is ItemInstance => a !== null && typeof a === "obj
 const isLiquidInstance = (a): a is LiquidInstance => a !== null && typeof a === "object" && typeof a.liquid === "string" && typeof a.amount === "number";
 
 const setLoadingTip: (text: string) => void = ModAPI.requireGlobal("MCSystem.setLoadingTip");
+
+const getLiquidByTex = (texture: string): string => {
+    for(let key in LiquidRegistry.liquids){
+        if(LiquidRegistry.liquids[key].uiTextures.some(tex => {
+            return tex === texture;
+        })){
+            return key;
+        }
+    }
+    return "";
+}
 
 Network.addClientPacket("nc.clientTipMessage", function(data: {msg: string}) {
 	Game.tipMessage(data.msg);

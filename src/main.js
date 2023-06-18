@@ -13,17 +13,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -39,12 +28,24 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 IMPORT("BlockEngine");
 IMPORT("EnergyNet");
 IMPORT("TileRender");
 IMPORT("StorageInterface");
 IMPORT("VanillaSlots");
 IMPORT("ConnectedTexture");
+IMPORT("WindowMaker");
 IMPORT("EnhancedRecipes");
 var Color = android.graphics.Color;
 var Bitmap = android.graphics.Bitmap;
@@ -59,6 +60,16 @@ var RF = EnergyTypeRegistry.assureEnergyType("RF", 0.25);
 var isItemInstance = function (a) { return a !== null && typeof a === "object" && typeof a.id === "number" && typeof a.count === "number" && typeof a.data === "number"; };
 var isLiquidInstance = function (a) { return a !== null && typeof a === "object" && typeof a.liquid === "string" && typeof a.amount === "number"; };
 var setLoadingTip = ModAPI.requireGlobal("MCSystem.setLoadingTip");
+var getLiquidByTex = function (texture) {
+    for (var key in LiquidRegistry.liquids) {
+        if (LiquidRegistry.liquids[key].uiTextures.some(function (tex) {
+            return tex === texture;
+        })) {
+            return key;
+        }
+    }
+    return "";
+};
 Network.addClientPacket("nc.clientTipMessage", function (data) {
     Game.tipMessage(data.msg);
 });
@@ -246,84 +257,20 @@ var MachineRegistry = /** @class */ (function () {
     };
     return MachineRegistry;
 }());
-var WindowMaker = /** @class */ (function () {
-    function WindowMaker(title, width, height, frame) {
-        this.width = width;
-        this.height = height;
-        this.ratio = 1000 / width;
-        this.z = 0;
-        this.content = {
-            standard: {
-                header: { text: { text: title } },
-                inventory: { standard: true },
-                background: { standard: true }
-            },
-            drawing: [
-                { type: "frame", x: 0, y: 0, width: 1000, height: height / width * 1000, bitmap: frame || "classic_frame_bg_light", scale: this.ratio }
-            ],
-            elements: {}
-        };
-    }
-    WindowMaker.prototype.adjustScale = function (elem) {
-        if ("x" in elem)
-            elem.x *= this.ratio;
-        if ("y" in elem)
-            elem.y *= this.ratio;
-        if ("width" in elem)
-            elem.width *= this.ratio;
-        if ("height" in elem)
-            elem.height *= this.ratio;
-        if ("size" in elem)
-            elem.size *= this.ratio;
-        elem["scale"] = "scale" in elem ? elem["scale"] * this.ratio : this.ratio;
-    };
-    WindowMaker.prototype.getWidth = function () {
-        return this.width;
-    };
-    WindowMaker.prototype.getHeight = function () {
-        return this.height;
-    };
-    WindowMaker.prototype.addDrawing = function (drawing) {
-        this.adjustScale(drawing);
-        this.content.drawing.push(drawing);
-    };
-    WindowMaker.prototype.addElements = function (name, elements) {
-        this.adjustScale(elements);
-        this.content.elements[name] = __assign(__assign({}, elements), { z: this.z });
-        this.z++;
-    };
-    WindowMaker.prototype.setClicker = function (name, clicker) {
-        var elem = this.content.elements[name];
-        if (elem) {
-            elem.clicker = clicker;
-        }
-    };
-    WindowMaker.prototype.setValidItem = function (name, validFunc) {
-        var elem = this.content.elements[name];
-        if (elem && elem.type === "slot") {
-            elem.isValid = validFunc;
-        }
-    };
-    WindowMaker.prototype.makeWindow = function () {
-        return new UI.StandardWindow(this.content);
-    };
-    WindowMaker.SCALE_RIGHT = 0;
-    WindowMaker.SCALE_UP = 1;
-    WindowMaker.SCALE_LEFT = 2;
-    WindowMaker.SCALE_DOWN = 3;
-    return WindowMaker;
-}());
 var NCWindowMaker = /** @class */ (function (_super) {
     __extends(NCWindowMaker, _super);
     function NCWindowMaker(title, width, height, frame) {
-        return _super.call(this, title, width, height, frame) || this;
+        var _this = _super.call(this, title, width, height, frame) || this;
+        _this.enableTooltip(true);
+        return _this;
     }
     NCWindowMaker.prototype.addSlot = function (name, x, y, size, bitmap) {
-        this.addElements(name, { type: "slot", x: x, y: y, size: size, bitmap: bitmap });
+        _super.prototype.addSlot.call(this, name, x, y, size, bitmap);
         name.startsWith("output") && this.setValidItem(name, function () { return false; });
+        return this;
     };
     NCWindowMaker.prototype.addTank = function (name, x, y, size, bitmap) {
-        this.addDrawing({ type: "bitmap", x: x, y: y, width: size, height: size, bitmap: bitmap });
+        this.addDrawing(name, { type: "bitmap", x: x, y: y, width: size, height: size, bitmap: bitmap });
         this.addElements(name, { type: "scale", x: x + 1, y: y + 1, width: size - 2, height: size - 2, direction: WindowMaker.SCALE_UP, pixelate: false });
         this.setClicker(name, {
             onLongClick: function (position, container, tileEntity) {
@@ -331,12 +278,22 @@ var NCWindowMaker = /** @class */ (function (_super) {
                 tank && tank.setAmount(null, 0);
             }
         });
+        this.setTooltipFunc(name, function (elem) {
+            var liquid = getLiquidByTex(elem.getBinding("texture") + "");
+            var amount = elem.getBinding("value") * 16000 | 0;
+            if (liquid && amount > 0) {
+                return liquid + "\n" + amount + " mB";
+            }
+            return "";
+        });
+        return this;
     };
-    NCWindowMaker.prototype.addScale = function (name, x, y, bmpBack, bmpFront, direction, thickness) {
+    NCWindowMaker.prototype.addProgressBar = function (name, x, y, bmpBack, bmpFront, direction, thickness) {
         if (direction === void 0) { direction = 0; }
         if (thickness === void 0) { thickness = 0; }
-        this.addDrawing({ type: "bitmap", x: x, y: y, bitmap: bmpBack });
-        this.addElements(name, { type: "scale", x: x + thickness, y: y + thickness, bitmap: bmpFront, direction: direction });
+        this.addScale(name, x, y, bmpBack, bmpFront, direction, thickness);
+        this.setTooltipFunc(name, function (elem) { return (elem.getBinding("value") * 100).toFixed(1) + "%"; });
+        return this;
     };
     return NCWindowMaker;
 }(WindowMaker));
@@ -440,6 +397,9 @@ var MachineBase = /** @class */ (function (_super) {
     };
     MachineBase.prototype.setUiScale = function (name, numerator, denominator) {
         this.container.setScale(name, denominator ? numerator / denominator : 0);
+    };
+    MachineBase.prototype.getScreenByName = function (screenName, container) {
+        return null;
     };
     __decorate([
         ClientSide
@@ -790,14 +750,8 @@ var ProcessorWindowMaker = /** @class */ (function (_super) {
         var width = 176;
         var height = 86;
         _this = _super.call(this, title, width, height) || this;
-        _this.contentForRV = {
-            drawing: [
-                { type: "frame", x: 0, y: 0, width: 1000, height: height / width * 1000, bitmap: "classic_frame_bg_light", scale: _this.ratio }
-            ],
-            elements: {}
-        };
         //energy scale
-        _this.addDrawing({ type: "frame", x: 7, y: 5, width: 18, height: 76, bitmap: "nc.frame" });
+        _this.addDrawing("", { type: "frame", x: 7, y: 5, width: 18, height: 76, bitmap: "nc.frame" });
         _this.addElements("scaleEnergy", { type: "scale", x: 8, y: 6, bitmap: "nc.energy", direction: WindowMaker.SCALE_UP });
         //upgrade slot
         _this.addSlot("slotUpgSpeed", 131, 63, 18, "nc.slot_upg_speed");
@@ -805,43 +759,11 @@ var ProcessorWindowMaker = /** @class */ (function (_super) {
         return _this;
         //this.addElements("buttonRedstone", {type: "button", x: 27, y: 63, bitmap: "nc.button_rs_off", scale: 0.5});
     }
-    ProcessorWindowMaker.prototype.getContentForRV = function () {
-        return this.contentForRV;
-    };
-    ProcessorWindowMaker.prototype.addDrawingToRV = function (drawing) {
-        this.adjustScale(drawing);
-        this.contentForRV.drawing.push(drawing);
-    };
-    ProcessorWindowMaker.prototype.addElementsToRV = function (name, elements) {
-        this.adjustScale(elements);
-        this.contentForRV.elements[name] = __assign(__assign({}, elements), { z: this.z });
-    };
-    ProcessorWindowMaker.prototype.addSlot = function (name, x, y, size, bitmap) {
-        if (name.startsWith("input") || name.startsWith("output")) {
-            this.addElementsToRV(name, { type: "slot", x: x, y: y, size: size, bitmap: bitmap });
-        }
-        _super.prototype.addSlot.call(this, name, x, y, size, bitmap);
-    };
-    ProcessorWindowMaker.prototype.addTank = function (name, x, y, size, bitmap) {
-        if (name.startsWith("inputLiq") || name.startsWith("outputLiq")) {
-            this.addDrawingToRV({ type: "bitmap", x: x, y: y, width: size, height: size, bitmap: bitmap });
-            this.addElementsToRV(name, { type: "scale", x: x + 1, y: y + 1, width: size - 2, height: size - 2, direction: WindowMaker.SCALE_UP, pixelate: true });
-        }
-        _super.prototype.addTank.call(this, name, x, y, size, bitmap);
-    };
-    ProcessorWindowMaker.prototype.addScale = function (name, x, y, bmpBack, bmpFront, direction, thickness) {
-        if (direction === void 0) { direction = 0; }
-        if (thickness === void 0) { thickness = 0; }
-        if (name === "scaleProgress") {
-            thickness > 0 && this.addDrawingToRV({ type: "bitmap", x: x, y: y, bitmap: bmpBack });
-            this.addDrawingToRV({ type: "bitmap", x: x + thickness, y: y + thickness, bitmap: bmpFront });
-        }
-        _super.prototype.addScale.call(this, name, x, y, bmpBack, bmpFront, direction, thickness);
-    };
     return ProcessorWindowMaker;
 }(NCWindowMaker));
 var ProcessorInterface = /** @class */ (function () {
     function ProcessorInterface(inSlotSize, inTankSize, outSlotSize, outTankSize) {
+        this.liquidUnitRatio = 0.001;
         this.slots = {};
         for (var i = 0; i < inSlotSize; i++) {
             this.slots["input" + i] = { input: true };
@@ -873,6 +795,9 @@ var ProcessorInterface = /** @class */ (function () {
             }
         }
         return null;
+    };
+    ProcessorInterface.prototype.canReceiveLiquid = function (liquid, side) {
+        return true;
     };
     return ProcessorInterface;
 }());
@@ -1698,6 +1623,12 @@ Item.addCreativeGroup("nc_cell", "NC Cell", [
     ItemRegistry.registerItem(new ItemFluidCell("cell_lava", "lava")).id,
     ItemRegistry.registerItem(new ItemFluidCell("cell_milk", "milk")).id
 ]);
+Callback.addCallback("PreLoaded", function () {
+    Recipes2.addShaped({ id: NCID.cell_empty, count: 2 }, "_a_:aba:_a_", {
+        a: NCID.bioplastic,
+        b: "glass_pane"
+    });
+});
 FluidRegistry.register("oxygen", "Oxygen", "GAS", "#7E8CC8");
 FluidRegistry.register("hydrogen", "Hydrogen", "GAS", "#B37AC4");
 FluidRegistry.register("deuterium", "Deuterium", "GAS", "#9E6FEF");
@@ -2246,23 +2177,23 @@ TileRenderer.registerModelWithRotation(NCID.fission_controller, 2, [0, 1, 3, 5, 
 TileRenderer.setRotationFunction(NCID.fission_controller);
 var NCWindow;
 (function (NCWindow) {
-    var winMaker = new NCWindowMaker("Fission Controller", 176, 97, "nc.frame_dark_bold");
-    winMaker.addSlot("slotSource", 55, 34, 18, "nc.slot_dark");
-    winMaker.addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large");
-    winMaker.addDrawing({ type: "frame", x: 7, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark" });
-    winMaker.addDrawing({ type: "frame", x: 17, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark" });
-    winMaker.addElements("scaleEnergy", { type: "scale", x: 8, y: 6, bitmap: "nc.fission_energy", direction: WindowMaker.SCALE_UP });
-    winMaker.addElements("scaleHeat", { type: "scale", x: 18, y: 6, bitmap: "nc.fission_heat", direction: WindowMaker.SCALE_UP });
-    winMaker.addScale("scaleProgress", 74, 35, "nc.prog_fission_bg", "nc.prog_fission");
-    winMaker.setClicker("scaleProgress", {
+    var font = { color: Color.rgb(255, 170, 0), size: 6 };
+    var winMaker = new NCWindowMaker("Fission Controller", 176, 97, "nc.frame_dark_bold")
+        .addSlot("slotSource", 55, 34, 18, "nc.slot_dark")
+        .addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large")
+        .addDrawing("", { type: "frame", x: 7, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark" })
+        .addDrawing("", { type: "frame", x: 17, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark" })
+        .addElements("scaleEnergy", { type: "scale", x: 8, y: 6, bitmap: "nc.fission_energy", direction: WindowMaker.SCALE_UP })
+        .addElements("scaleHeat", { type: "scale", x: 18, y: 6, bitmap: "nc.fission_heat", direction: WindowMaker.SCALE_UP })
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_fission_bg", "nc.prog_fission")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage("nc_fission");
         }
-    });
-    var font = { color: Color.rgb(255, 170, 0), size: 30 };
-    winMaker.addElements("textTitle", { type: "text", x: 92, y: 3, font: __assign(__assign({}, font), { align: UI.Font.ALIGN_CENTER }) });
-    winMaker.addElements("textFuel", { type: "text", x: 32, y: 80, multiline: true, font: font });
-    winMaker.addElements("textStatus", { type: "text", x: 168, y: 80, multiline: true, font: __assign(__assign({}, font), { align: UI.Font.ALIGN_END }) });
+    })
+        .addElements("textTitle", { type: "text", x: 92, y: 3, font: __assign(__assign({}, font), { align: UI.Font.ALIGN_CENTER }) })
+        .addElements("textFuel", { type: "text", x: 32, y: 80, multiline: true, font: font })
+        .addElements("textStatus", { type: "text", x: 168, y: 80, multiline: true, font: __assign(__assign({}, font), { align: UI.Font.ALIGN_END }) });
     NCWindow.FissionController = winMaker.makeWindow();
 })(NCWindow || (NCWindow = {}));
 var TileFissionController = /** @class */ (function (_super) {
@@ -2745,13 +2676,13 @@ TileRenderer.registerModelWithRotation(NCID.furnace, 2, [0, 1, 0, 3, 0, 0].map(f
 TileRenderer.setRotationFunction(NCID.furnace);
 var NCWindow;
 (function (NCWindow) {
-    var winMaker = new NCWindowMaker("Nuclear Furnace", 176, 86, "nc.frame_dark_bold");
-    winMaker.addSlot("slotFuel", 55, 52, 18, "nc.slot_dark");
-    winMaker.addSlot("slotSource", 55, 16, 18, "nc.slot_dark");
-    winMaker.addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large");
-    winMaker.addScale("scaleFire", 57, 36, "nc.fire_bg", "nc.fire", WindowMaker.SCALE_UP);
-    winMaker.addScale("scaleProgress", 80, 34, "nc.prog_furnace_bg", "nc.prog_furnace");
-    winMaker.setClicker("scaleProgress", {
+    var winMaker = new NCWindowMaker("Nuclear Furnace", 176, 86, "nc.frame_dark_bold")
+        .addSlot("slotFuel", 55, 52, 18, "nc.slot_dark")
+        .addSlot("slotSource", 55, 16, 18, "nc.slot_dark")
+        .addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large")
+        .addScale("scaleFire", 57, 36, "nc.fire_bg", "nc.fire", WindowMaker.SCALE_UP)
+        .addProgressBar("scaleProgress", 80, 34, "nc.prog_furnace_bg", "nc.prog_furnace")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(["furnace", "nc_fuel"]);
         }
@@ -2900,194 +2831,194 @@ ProcessorRegistry.createMachine("centrifuge", "Centrifuge", [0, 1, 0, 4], "SMOKE
 ProcessorRegistry.createMachine("rock_crusher", "Rock Crusher", [1, 0, 3, 0], "SMOKE", "SMOKE", 400, 20);
 var NCWindow;
 (function (NCWindow) {
-    NCWindow.Manufactory = new ProcessorWindowMaker("Manufactory");
-    NCWindow.Manufactory.addScale("scaleProgress", 74, 35, "nc.prog_manufactory_bg", "nc.prog_manufactory");
-    NCWindow.Manufactory.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    NCWindow.Manufactory.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    NCWindow.Manufactory.setClicker("scaleProgress", {
+    NCWindow.Manufactory = new ProcessorWindowMaker("Manufactory")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_manufactory_bg", "nc.prog_manufactory")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "manufactory");
         }
     });
-    NCWindow.IsotopeSeparator = new ProcessorWindowMaker("Isotope Separator");
-    NCWindow.IsotopeSeparator.addScale("scaleProgress", 60, 34, "nc.prog_isotope_separator_bg", "nc.prog_isotope_separator");
-    NCWindow.IsotopeSeparator.addSlot("input0", 41, 34, 18, "nc.slot_input");
-    NCWindow.IsotopeSeparator.addSlot("output0", 97, 30, 26, "nc.slot_output_large");
-    NCWindow.IsotopeSeparator.addSlot("output1", 125, 30, 26, "nc.slot_output_large");
-    NCWindow.IsotopeSeparator.setClicker("scaleProgress", {
+    NCWindow.IsotopeSeparator = new ProcessorWindowMaker("Isotope Separator")
+        .addProgressBar("scaleProgress", 60, 34, "nc.prog_isotope_separator_bg", "nc.prog_isotope_separator")
+        .addSlot("input0", 41, 34, 18, "nc.slot_input")
+        .addSlot("output0", 97, 30, 26, "nc.slot_output_large")
+        .addSlot("output1", 125, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "isotope_separator");
         }
     });
-    NCWindow.DecayHastener = new ProcessorWindowMaker("Decay Hastener");
-    NCWindow.DecayHastener.addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener");
-    NCWindow.DecayHastener.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    NCWindow.DecayHastener.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    NCWindow.DecayHastener.setClicker("scaleProgress", {
+    NCWindow.DecayHastener = new ProcessorWindowMaker("Decay Hastener")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "decay_hastener");
         }
     });
-    NCWindow.FuelReprocessor = new ProcessorWindowMaker("Fuel Reprocessor");
-    NCWindow.FuelReprocessor.addScale("scaleProgress", 68, 18, "nc.prog_fuel_reprocessor_bg", "nc.prog_fuel_reprocessor");
-    NCWindow.FuelReprocessor.addSlot("input0", 49, 28, 18, "nc.slot_input");
-    NCWindow.FuelReprocessor.addSlot("output0", 105, 18, 18, "nc.slot_output");
-    NCWindow.FuelReprocessor.addSlot("output1", 125, 18, 18, "nc.slot_output");
-    NCWindow.FuelReprocessor.addSlot("output2", 105, 38, 18, "nc.slot_output");
-    NCWindow.FuelReprocessor.addSlot("output3", 125, 38, 18, "nc.slot_output");
-    NCWindow.FuelReprocessor.setClicker("scaleProgress", {
+    NCWindow.FuelReprocessor = new ProcessorWindowMaker("Fuel Reprocessor")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_fuel_reprocessor_bg", "nc.prog_fuel_reprocessor")
+        .addSlot("input0", 49, 28, 18, "nc.slot_input")
+        .addSlot("output0", 105, 18, 18, "nc.slot_output")
+        .addSlot("output1", 125, 18, 18, "nc.slot_output")
+        .addSlot("output2", 105, 38, 18, "nc.slot_output")
+        .addSlot("output3", 125, 38, 18, "nc.slot_output")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fuel_reprocessor");
         }
     });
-    NCWindow.AlloyFurnace = new ProcessorWindowMaker("Alloy Furnace");
-    NCWindow.AlloyFurnace.addScale("scaleProgress", 84, 35, "nc.prog_alloy_furnace_bg", "nc.prog_alloy_furnace");
-    NCWindow.AlloyFurnace.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    NCWindow.AlloyFurnace.addSlot("input1", 65, 34, 18, "nc.slot_input");
-    NCWindow.AlloyFurnace.addSlot("output0", 121, 30, 26, "nc.slot_output_large");
-    NCWindow.AlloyFurnace.setClicker("scaleProgress", {
+    NCWindow.AlloyFurnace = new ProcessorWindowMaker("Alloy Furnace")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_alloy_furnace_bg", "nc.prog_alloy_furnace")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addSlot("input1", 65, 34, 18, "nc.slot_input")
+        .addSlot("output0", 121, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "alloy_furnace");
         }
     });
-    NCWindow.FluidInfuser = new ProcessorWindowMaker("Fluid Infuser");
-    NCWindow.FluidInfuser.addScale("scaleProgress", 84, 35, "nc.prog_fluid_infuser_bg", "nc.prog_fluid_infuser");
-    NCWindow.FluidInfuser.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    NCWindow.FluidInfuser.addTank("inputLiq0", 65, 34, 18, "nc.tank_input");
-    NCWindow.FluidInfuser.addSlot("output0", 121, 30, 26, "nc.slot_output_large");
-    NCWindow.FluidInfuser.setClicker("scaleProgress", {
+    NCWindow.FluidInfuser = new ProcessorWindowMaker("Fluid Infuser")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_fluid_infuser_bg", "nc.prog_fluid_infuser")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addTank("inputLiq0", 65, 34, 18, "nc.tank_input")
+        .addSlot("output0", 121, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_infuser");
         }
     });
-    NCWindow.Melter = new ProcessorWindowMaker("Melter");
-    NCWindow.Melter.addScale("scaleProgress", 74, 35, "nc.prog_melter_bg", "nc.prog_melter");
-    NCWindow.Melter.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    NCWindow.Melter.addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large");
-    NCWindow.Melter.setClicker("scaleProgress", {
+    NCWindow.Melter = new ProcessorWindowMaker("Melter")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_melter_bg", "nc.prog_melter")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "melter");
         }
     });
-    NCWindow.Supercooler = new ProcessorWindowMaker("Supercooler");
-    NCWindow.Supercooler.addScale("scaleProgress", 74, 35, "nc.prog_supercooler_bg", "nc.prog_supercooler");
-    NCWindow.Supercooler.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    NCWindow.Supercooler.addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large");
-    NCWindow.Supercooler.setClicker("scaleProgress", {
+    NCWindow.Supercooler = new ProcessorWindowMaker("Supercooler")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_supercooler_bg", "nc.prog_supercooler")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 111, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "supercooler");
         }
     });
-    NCWindow.Electrolyzer = new ProcessorWindowMaker("Electrolyzer");
-    NCWindow.Electrolyzer.addScale("scaleProgress", 68, 18, "nc.prog_electrolyzer_bg", "nc.prog_electrolyzer");
-    NCWindow.Electrolyzer.addTank("inputLiq0", 49, 28, 18, "nc.tank_input");
-    NCWindow.Electrolyzer.addTank("outputLiq0", 105, 18, 18, "nc.tank_output");
-    NCWindow.Electrolyzer.addTank("outputLiq1", 125, 18, 18, "nc.tank_output");
-    NCWindow.Electrolyzer.addTank("outputLiq2", 105, 38, 18, "nc.tank_output");
-    NCWindow.Electrolyzer.addTank("outputLiq3", 125, 38, 18, "nc.tank_output");
-    NCWindow.Electrolyzer.setClicker("scaleProgress", {
+    NCWindow.Electrolyzer = new ProcessorWindowMaker("Electrolyzer")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_electrolyzer_bg", "nc.prog_electrolyzer")
+        .addTank("inputLiq0", 49, 28, 18, "nc.tank_input")
+        .addTank("outputLiq0", 105, 18, 18, "nc.tank_output")
+        .addTank("outputLiq1", 125, 18, 18, "nc.tank_output")
+        .addTank("outputLiq2", 105, 38, 18, "nc.tank_output")
+        .addTank("outputLiq3", 125, 38, 18, "nc.tank_output")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "electrolyzer");
         }
     });
-    NCWindow.NeutronIrradiator = new ProcessorWindowMaker("Neutron Irradiator");
-    NCWindow.NeutronIrradiator.addScale("scaleProgress", 70, 35, "nc.prog_neutron_irradiator_bg", "nc.prog_neutron_irradiator");
-    NCWindow.NeutronIrradiator.addTank("inputLiq0", 31, 34, 18, "nc.tank_input");
-    NCWindow.NeutronIrradiator.addTank("inputLiq1", 51, 34, 18, "nc.tank_input");
-    NCWindow.NeutronIrradiator.addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large");
-    NCWindow.NeutronIrradiator.addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large");
-    NCWindow.NeutronIrradiator.setClicker("scaleProgress", {
+    NCWindow.NeutronIrradiator = new ProcessorWindowMaker("Neutron Irradiator")
+        .addProgressBar("scaleProgress", 70, 35, "nc.prog_neutron_irradiator_bg", "nc.prog_neutron_irradiator")
+        .addTank("inputLiq0", 31, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 51, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large")
+        .addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "neutron_irradiator");
         }
     });
-    NCWindow.IngotFormer = new ProcessorWindowMaker("Ingot Former");
-    NCWindow.IngotFormer.addScale("scaleProgress", 74, 35, "nc.prog_ingot_former_bg", "nc.prog_ingot_former");
-    NCWindow.IngotFormer.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    NCWindow.IngotFormer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    NCWindow.IngotFormer.setClicker("scaleProgress", {
+    NCWindow.IngotFormer = new ProcessorWindowMaker("Ingot Former")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_ingot_former_bg", "nc.prog_ingot_former")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "ingot_former");
         }
     });
-    NCWindow.Pressurizer = new ProcessorWindowMaker("Pressurizer");
-    NCWindow.Pressurizer.addScale("scaleProgress", 74, 35, "nc.prog_pressurizer_bg", "nc.prog_pressurizer");
-    NCWindow.Pressurizer.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    NCWindow.Pressurizer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    NCWindow.Pressurizer.setClicker("scaleProgress", {
+    NCWindow.Pressurizer = new ProcessorWindowMaker("Pressurizer")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_pressurizer_bg", "nc.prog_pressurizer")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "pressurizer");
         }
     });
-    NCWindow.ChemicalReactor = new ProcessorWindowMaker("Chemical Reactor");
-    NCWindow.ChemicalReactor.addScale("scaleProgress", 70, 34, "nc.prog_chemical_reactor_bg", "nc.prog_chemical_reactor");
-    NCWindow.ChemicalReactor.addTank("inputLiq0", 31, 34, 18, "nc.tank_input");
-    NCWindow.ChemicalReactor.addTank("inputLiq1", 51, 34, 18, "nc.tank_input");
-    NCWindow.ChemicalReactor.addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large");
-    NCWindow.ChemicalReactor.addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large");
-    NCWindow.ChemicalReactor.setClicker("scaleProgress", {
+    NCWindow.ChemicalReactor = new ProcessorWindowMaker("Chemical Reactor")
+        .addProgressBar("scaleProgress", 70, 34, "nc.prog_chemical_reactor_bg", "nc.prog_chemical_reactor")
+        .addTank("inputLiq0", 31, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 51, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 107, 30, 26, "nc.tank_output_large")
+        .addTank("outputLiq1", 135, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "chemical_reactor");
         }
     });
-    NCWindow.SaltMixer = new ProcessorWindowMaker("Salt Mixer");
-    NCWindow.SaltMixer.addScale("scaleProgress", 84, 34, "nc.prog_salt_mixer_bg", "nc.prog_salt_mixer");
-    NCWindow.SaltMixer.addTank("inputLiq0", 45, 34, 18, "nc.tank_input");
-    NCWindow.SaltMixer.addTank("inputLiq1", 65, 34, 18, "nc.tank_input");
-    NCWindow.SaltMixer.addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large");
-    NCWindow.SaltMixer.setClicker("scaleProgress", {
+    NCWindow.SaltMixer = new ProcessorWindowMaker("Salt Mixer")
+        .addProgressBar("scaleProgress", 84, 34, "nc.prog_salt_mixer_bg", "nc.prog_salt_mixer")
+        .addTank("inputLiq0", 45, 34, 18, "nc.tank_input")
+        .addTank("inputLiq1", 65, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "salt_mixer");
         }
     });
-    NCWindow.Crystallizer = new ProcessorWindowMaker("Crystallizer");
-    NCWindow.Crystallizer.addScale("scaleProgress", 74, 35, "nc.prog_crystallizer_bg", "nc.prog_crystallizer");
-    NCWindow.Crystallizer.addTank("inputLiq0", 55, 34, 18, "nc.tank_input");
-    NCWindow.Crystallizer.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-    NCWindow.Crystallizer.setClicker("scaleProgress", {
+    NCWindow.Crystallizer = new ProcessorWindowMaker("Crystallizer")
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_crystallizer_bg", "nc.prog_crystallizer")
+        .addTank("inputLiq0", 55, 34, 18, "nc.tank_input")
+        .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "crystallizer");
         }
     });
-    NCWindow.FluidEnricher = new ProcessorWindowMaker("Fluid Enricher");
-    NCWindow.FluidEnricher.addScale("scaleProgress", 84, 35, "nc.prog_fluid_enricher_bg", "nc.prog_fluid_enricher");
-    NCWindow.FluidEnricher.addSlot("input0", 45, 34, 18, "nc.slot_input");
-    NCWindow.FluidEnricher.addTank("inputLiq0", 65, 34, 18, "nc.tank_input");
-    NCWindow.FluidEnricher.addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large");
-    NCWindow.FluidEnricher.setClicker("scaleProgress", {
+    NCWindow.FluidEnricher = new ProcessorWindowMaker("Fluid Enricher")
+        .addProgressBar("scaleProgress", 84, 35, "nc.prog_fluid_enricher_bg", "nc.prog_fluid_enricher")
+        .addSlot("input0", 45, 34, 18, "nc.slot_input")
+        .addTank("inputLiq0", 65, 34, 18, "nc.tank_input")
+        .addTank("outputLiq0", 121, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_enricher");
         }
     });
-    NCWindow.FluidExtractor = new ProcessorWindowMaker("Fluid Extractor");
-    NCWindow.FluidExtractor.addScale("scaleProgress", 60, 35, "nc.prog_fluid_extractor_bg", "nc.prog_fluid_extractor");
-    NCWindow.FluidExtractor.addSlot("input0", 41, 34, 18, "nc.slot_input");
-    NCWindow.FluidExtractor.addSlot("output0", 97, 30, 26, "nc.slot_output_large");
-    NCWindow.FluidExtractor.addTank("outputLiq0", 125, 30, 26, "nc.tank_output_large");
-    NCWindow.FluidExtractor.setClicker("scaleProgress", {
+    NCWindow.FluidExtractor = new ProcessorWindowMaker("Fluid Extractor")
+        .addProgressBar("scaleProgress", 60, 35, "nc.prog_fluid_extractor_bg", "nc.prog_fluid_extractor")
+        .addSlot("input0", 41, 34, 18, "nc.slot_input")
+        .addSlot("output0", 97, 30, 26, "nc.slot_output_large")
+        .addTank("outputLiq0", 125, 30, 26, "nc.tank_output_large")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "fluid_extractor");
         }
     });
-    NCWindow.Centrifuge = new ProcessorWindowMaker("Centrifuge");
-    NCWindow.Centrifuge.addScale("scaleProgress", 68, 18, "nc.prog_centrifuge_bg", "nc.prog_centrifuge");
-    NCWindow.Centrifuge.addTank("inputLiq0", 49, 28, 18, "nc.tank_input");
-    NCWindow.Centrifuge.addTank("outputLiq0", 105, 18, 18, "nc.tank_output");
-    NCWindow.Centrifuge.addTank("outputLiq1", 125, 18, 18, "nc.tank_output");
-    NCWindow.Centrifuge.addTank("outputLiq2", 105, 38, 18, "nc.tank_output");
-    NCWindow.Centrifuge.addTank("outputLiq3", 125, 38, 18, "nc.tank_output");
-    NCWindow.Centrifuge.setClicker("scaleProgress", {
+    NCWindow.Centrifuge = new ProcessorWindowMaker("Centrifuge")
+        .addProgressBar("scaleProgress", 68, 18, "nc.prog_centrifuge_bg", "nc.prog_centrifuge")
+        .addTank("inputLiq0", 49, 28, 18, "nc.tank_input")
+        .addTank("outputLiq0", 105, 18, 18, "nc.tank_output")
+        .addTank("outputLiq1", 125, 18, 18, "nc.tank_output")
+        .addTank("outputLiq2", 105, 38, 18, "nc.tank_output")
+        .addTank("outputLiq3", 125, 38, 18, "nc.tank_output")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "centrifuge");
         }
     });
-    NCWindow.RockCrusher = new ProcessorWindowMaker("Rock Crusher");
-    NCWindow.RockCrusher.addScale("scaleProgress", 56, 35, "nc.prog_rock_crusher_bg", "nc.prog_rock_crusher");
-    NCWindow.RockCrusher.addSlot("input0", 55, 34, 18, "nc.slot_input");
-    NCWindow.RockCrusher.addSlot("output0", 93, 34, 18, "nc.slot_output");
-    NCWindow.RockCrusher.addSlot("output1", 113, 34, 18, "nc.slot_output");
-    NCWindow.RockCrusher.addSlot("output2", 133, 34, 18, "nc.slot_output");
-    NCWindow.RockCrusher.setClicker("scaleProgress", {
+    NCWindow.RockCrusher = new ProcessorWindowMaker("Rock Crusher")
+        .addProgressBar("scaleProgress", 56, 35, "nc.prog_rock_crusher_bg", "nc.prog_rock_crusher")
+        .addSlot("input0", 55, 34, 18, "nc.slot_input")
+        .addSlot("output0", 93, 34, 18, "nc.slot_output")
+        .addSlot("output1", 113, 34, 18, "nc.slot_output")
+        .addSlot("output2", 133, 34, 18, "nc.slot_output")
+        .setClicker("scaleProgress", {
         onClick: function () {
             RV && RV.RecipeTypeRegistry.openRecipePage(NCItem.PREFIX + "rock_crusher");
         }
@@ -3273,6 +3204,8 @@ Callback.addCallback("PreLoaded", function () {
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.centrifuge);
+    handler.add(["molten_boron:144"], ["molten_boron11:144"], ["molten_boron10:48"], null, null);
+    handler.add(["molten_lithium:144"], ["molten_lithium7:144"], ["molten_lithium6:48"], null, null);
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.chemical_reactor);
@@ -3325,12 +3258,20 @@ Callback.addCallback("PreLoaded", function () {
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.electrolyzer);
+    handler.add(["water:1000"], ["hydrogen:950"], ["deuterium:50"], ["oxygen:500"], null, 1.5, 1.0);
+    handler.add(["hydrofluoric_acid:1000"], ["hydrogen:500"], ["fluorine:500"], null, null, 1.0, 0.5);
+    handler.add(["molten_NaOH:666"], ["molten_sodium:144"], ["water:1000"], ["oxygen:500"], null, 1.5, 1.5);
+    handler.add(["molten_KOH:666"], ["molten_potassium:144"], ["water:1000"], ["oxygen:500"], null, 1.5, 1.5);
+    handler.add(["molten_alumina:144"], ["molten_aluminum:288"], ["oxygen:3000"], null, null, 2.0, 1.0);
+    //Fluoride Recipes
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.fluid_enricher);
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.fluid_extractor);
+    handler.add(NCID.cooler_water, NCID.cooler_empty, ["water:1000"]);
+    handler.add(NCID.cooler_helium, NCID.cooler_empty, ["liquid_helium:1000"]);
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.fluid_infuser);
@@ -3740,17 +3681,209 @@ Callback.addCallback("PreLoaded", function () {
         d: NCID.wire_MnO2
     });
 });
+var TileItemGenerator = /** @class */ (function (_super) {
+    __extends(TileItemGenerator, _super);
+    function TileItemGenerator(item, countPerSec) {
+        var _this = _super.call(this) || this;
+        _this.passive_item = typeof item === "number" ? { id: item, data: 0 } : item;
+        _this.passive_speed = countPerSec;
+        return _this;
+    }
+    TileItemGenerator.prototype.onInit = function () {
+        delete this.liquidStorage;
+    };
+    TileItemGenerator.prototype.onTick = function () {
+        if (World.getThreadTime() % 20 === 0) {
+            var amount = this.passive_speed;
+            var storage = void 0;
+            for (var side = 0; side < 6 && amount > 0; side++) {
+                storage = StorageInterface.getNeighbourStorage(this.blockSource, this, side);
+                if (storage) {
+                    amount = storage.addItem(__assign(__assign({}, this.passive_item), { count: amount }), side ^ 1);
+                }
+            }
+        }
+    };
+    return TileItemGenerator;
+}(TileEntityBase));
+var TileFluidGenerator = /** @class */ (function (_super) {
+    __extends(TileFluidGenerator, _super);
+    function TileFluidGenerator(fluid, mbPerSec) {
+        var _this = _super.call(this) || this;
+        _this.passive_fluid = fluid;
+        _this.passive_speed = mbPerSec;
+        return _this;
+    }
+    TileFluidGenerator.prototype.onInit = function () {
+        delete this.liquidStorage;
+    };
+    TileFluidGenerator.prototype.onTick = function () {
+        if (World.getThreadTime() % 20 === 0) {
+            var amount = this.passive_speed;
+            var storage = void 0;
+            var tank = void 0;
+            for (var side = 0; side < 6 && amount > 0; side++) {
+                storage = StorageInterface.getNeighbourStorage(this.blockSource, this, side);
+                if (storage) {
+                    tank = storage.getInputTank(side ^ 1);
+                    if (tank && storage.canReceiveLiquid(this.passive_fluid, amount) && !tank.isFull(this.passive_fluid)) {
+                        amount = tank.addLiquid(this.passive_fluid, amount);
+                    }
+                }
+            }
+        }
+    };
+    return TileFluidGenerator;
+}(TileEntityBase));
+Item.addCreativeGroup("nc_passive", "Item/Fluid Generator", [
+    NCItem.createBlock("passive_cobblestone", "Cobblestone Generator"),
+    NCItem.createBlock("passive_cobblestone_compact", "Compact Cobblestone Generator"),
+    NCItem.createBlock("passive_cobblestone_dense", "Dense Cobblestone Generator"),
+    NCItem.createBlock("passive_water", "Infinite Water Source"),
+    NCItem.createBlock("passive_water_compact", "Compact Infinite Water Source"),
+    NCItem.createBlock("passive_water_dense", "Dense Infinite Water Source"),
+    NCItem.createBlock("passive_helium", "Helium Collector"),
+    NCItem.createBlock("passive_helium_compact", "Compact Helium Collector"),
+    NCItem.createBlock("passive_helium_dense", "Dense Helium Collector"),
+    NCItem.createBlock("passive_nitrogen", "Nitrogen Collector"),
+    NCItem.createBlock("passive_nitrogen_compact", "Compact Nitrogen Collector"),
+    NCItem.createBlock("passive_nitrogen_dense", "Dense Nitrogen Collector")
+]);
+Block.setDestroyTime(NCID.passive_cobblestone, 3);
+Block.setDestroyTime(NCID.passive_cobblestone_compact, 3);
+Block.setDestroyTime(NCID.passive_cobblestone_dense, 3);
+Block.setDestroyTime(NCID.passive_water, 3);
+Block.setDestroyTime(NCID.passive_water_compact, 3);
+Block.setDestroyTime(NCID.passive_water_dense, 3);
+Block.setDestroyTime(NCID.passive_helium, 3);
+Block.setDestroyTime(NCID.passive_helium_compact, 3);
+Block.setDestroyTime(NCID.passive_helium_dense, 3);
+Block.setDestroyTime(NCID.passive_nitrogen, 3);
+Block.setDestroyTime(NCID.passive_nitrogen_compact, 3);
+Block.setDestroyTime(NCID.passive_nitrogen_dense, 3);
+ToolAPI.registerBlockMaterial(NCID.passive_cobblestone, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_cobblestone_compact, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_cobblestone_dense, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_water, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_water_compact, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_water_dense, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_helium, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_helium_compact, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_helium_dense, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_nitrogen, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_nitrogen_compact, "stone");
+ToolAPI.registerBlockMaterial(NCID.passive_nitrogen_dense, "stone");
+TileEntity.registerPrototype(NCID.passive_cobblestone, new TileItemGenerator(VanillaBlockID.cobblestone, 2));
+TileEntity.registerPrototype(NCID.passive_cobblestone_compact, new TileItemGenerator(VanillaBlockID.cobblestone, 16));
+TileEntity.registerPrototype(NCID.passive_cobblestone_dense, new TileItemGenerator(VanillaBlockID.cobblestone, 128));
+TileEntity.registerPrototype(NCID.passive_water, new TileFluidGenerator("water", 200));
+TileEntity.registerPrototype(NCID.passive_water_compact, new TileFluidGenerator("water", 1600));
+TileEntity.registerPrototype(NCID.passive_water_dense, new TileFluidGenerator("water", 12800));
+TileEntity.registerPrototype(NCID.passive_helium, new TileFluidGenerator("helium", 100));
+TileEntity.registerPrototype(NCID.passive_helium_compact, new TileFluidGenerator("helium", 800));
+TileEntity.registerPrototype(NCID.passive_helium_dense, new TileFluidGenerator("helium", 6400));
+TileEntity.registerPrototype(NCID.passive_nitrogen, new TileFluidGenerator("nitrogen", 50));
+TileEntity.registerPrototype(NCID.passive_nitrogen_compact, new TileFluidGenerator("nitrogen", 400));
+TileEntity.registerPrototype(NCID.passive_nitrogen_dense, new TileFluidGenerator("nitrogen", 3200));
 Callback.addCallback("PreLoaded", function () {
+    var bucketFunc = function (api, field, slot) {
+        var liquid = "";
+        var empty;
+        for (var i = 0; i < field.length; i++) {
+            liquid = LiquidRegistry.getItemLiquid(field[i].id, field[i].data);
+            if (liquid === "water" || liquid === "lava") {
+                empty = LiquidRegistry.getEmptyItem(field[i].id, field[i].data);
+                field[i].id = empty.id;
+                field[i].data = empty.data;
+            }
+            else {
+                api.decreaseFieldSlot(i);
+            }
+        }
+    };
+    Recipes2.addShaped(NCID.passive_cobblestone, "aba:c_d:aba", {
+        a: NCID.plate_basic,
+        b: NCID.ingot_tin,
+        c: "water_bucket",
+        d: "lava_bucket"
+    }, bucketFunc);
+    Recipes2.addShaped(NCID.passive_cobblestone_compact, "aaa:aba:aaa", {
+        a: NCID.passive_cobblestone,
+        b: NCID.alloy_bronze
+    });
+    Recipes2.addShaped(NCID.passive_cobblestone_dense, "aaa:aba:aaa", {
+        a: NCID.passive_cobblestone_compact,
+        b: "gold_ingot"
+    });
+    Recipes2.addShaped(NCID.passive_water, "aba:c_c:aba", {
+        a: NCID.plate_basic,
+        b: NCID.ingot_tin,
+        c: "water_bucket"
+    }, bucketFunc);
+    Recipes2.addShaped(NCID.passive_water_compact, "aaa:aba:aaa", {
+        a: NCID.passive_water,
+        b: NCID.alloy_bronze
+    });
+    Recipes2.addShaped(NCID.passive_water_dense, "aaa:aba:aaa", {
+        a: NCID.passive_water_compact,
+        b: "gold_ingot"
+    });
+    Recipes2.addShaped(NCID.passive_helium, "aba:bcb:aba", {
+        a: NCID.plate_basic,
+        b: NCID.ingot_zirconium,
+        c: NCID.block_thorium230
+    });
+    Recipes2.addShaped(NCID.passive_helium_compact, "aaa:aba:aaa", {
+        a: NCID.passive_helium,
+        b: NCID.alloy_bronze
+    });
+    Recipes2.addShaped(NCID.passive_helium_dense, "aaa:aba:aaa", {
+        a: NCID.passive_helium_compact,
+        b: "gold_ingot"
+    });
+    Recipes2.addShaped(NCID.passive_nitrogen, "aba:c_c:aba", {
+        a: NCID.plate_adv,
+        b: NCID.ingot_beryllium,
+        c: "bucket"
+    });
+    Recipes2.addShaped(NCID.passive_nitrogen_compact, "aaa:aba:aaa", {
+        a: NCID.passive_nitrogen,
+        b: NCID.alloy_bronze
+    });
+    Recipes2.addShaped(NCID.passive_nitrogen_dense, "aaa:aba:aaa", {
+        a: NCID.passive_nitrogen_compact,
+        b: "gold_ingot"
+    });
 });
 var RV;
 ModAPI.addAPICallback("RecipeViewer", function (api) {
     RV = api;
+    var RecipeType = api.RecipeType;
     var ProcessorRecipeType = /** @class */ (function (_super) {
         __extends(ProcessorRecipeType, _super);
-        function ProcessorRecipeType(name, blockID, content) {
-            var _this = _super.call(this, name, blockID, content) || this;
+        function ProcessorRecipeType(name, blockID, winMaker) {
+            var _this = this;
+            var recHandler = ProcessorRegistry.getRecipeHandler(blockID);
+            var input = [];
+            var output = [];
+            var inputLiq = [];
+            var outputLiq = [];
+            for (var i = 0; i < recHandler.inputSlotSize; i++)
+                input.push("input" + i);
+            for (var i = 0; i < recHandler.outputSlotSize; i++)
+                output.push("output" + i);
+            for (var i = 0; i < recHandler.inputTankSize; i++)
+                inputLiq.push("inputLiq" + i);
+            for (var i = 0; i < recHandler.outputTankSize; i++)
+                outputLiq.push("outputLiq" + i);
+            _this = _super.call(this, name, blockID, winMaker.getContentForRV({
+                input: input,
+                output: output,
+                inputLiq: inputLiq,
+                outputLiq: outputLiq
+            }, __spreadArray(__spreadArray(__spreadArray([], inputLiq, true), outputLiq, true), ["scaleProgress"], false))) || this;
             _this.blockID = blockID;
-            _this.setTankLimit(16000);
+            _this.setTankLimit(1000);
             return _this;
         }
         ProcessorRecipeType.prototype.getAllList = function () {
@@ -3761,9 +3894,9 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
             return [];
         };
         return ProcessorRecipeType;
-    }(api.RecipeType));
+    }(RecipeType));
     var register = function (key, name, winMaker) {
-        api.RecipeTypeRegistry.register(NCItem.PREFIX + key, new ProcessorRecipeType(name, NCID[key], winMaker.getContentForRV()));
+        api.RecipeTypeRegistry.register(NCItem.PREFIX + key, new ProcessorRecipeType(name, NCID[key], winMaker));
     };
     register("manufactory", "Manufactory", NCWindow.Manufactory);
     register("isotope_separator", "Isotope Separator", NCWindow.IsotopeSeparator);
@@ -3787,12 +3920,15 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
     var FissionRecipeType = /** @class */ (function (_super) {
         __extends(FissionRecipeType, _super);
         function FissionRecipeType() {
-            var winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold");
-            winMaker.addSlot("input0", 55, 34, 18, "nc.slot_dark");
-            winMaker.addSlot("output0", 111, 30, 26, "nc.slot_dark_large");
-            winMaker.addDrawing({ type: "bitmap", x: 74, y: 35, bitmap: "nc.prog_fission" });
-            winMaker.addElements("textInfo", { type: "text", x: 37, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 40 }, multiline: true });
-            return _super.call(this, "Fission Reactor", NCID.fission_controller, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
+            var winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold")
+                .addSlot("input0", 55, 34, 18, "nc.slot_dark")
+                .addSlot("output0", 111, 30, 26, "nc.slot_dark_large")
+                .addDrawing("scaleProgress", { type: "bitmap", x: 74, y: 35, bitmap: "nc.prog_fission" })
+                .addElements("textInfo", { type: "text", x: 37, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 6 }, multiline: true });
+            return _super.call(this, "Fission Reactor", NCID.fission_controller, winMaker.getContentForRV({
+                input: ["input0"],
+                output: ["output0"]
+            }, ["scaleProgress", "textInfo"])) || this;
         }
         FissionRecipeType.prototype.getAllList = function () {
             return FissionFuel.getAllListForRV();
@@ -3802,16 +3938,19 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
             elements.get("textInfo").setBinding("text", "Base depletion time: ".concat(FissionFuel.tickToString(params.time), "\nBase power gen: ").concat(params.power, " RF/t\nBase heat gen: ").concat(params.heat, " H/t"));
         };
         return FissionRecipeType;
-    }(api.RecipeType));
+    }(RecipeType));
     var DecayGeneratorRecipeType = /** @class */ (function (_super) {
         __extends(DecayGeneratorRecipeType, _super);
         function DecayGeneratorRecipeType() {
-            var winMaker = new NCWindowMaker("Decay Generator", 176, 86);
-            winMaker.addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener");
-            winMaker.addSlot("input0", 55, 34, 18, "nc.slot_input");
-            winMaker.addSlot("output0", 111, 30, 26, "nc.slot_output_large");
-            winMaker.addElements("textInfo", { type: "text", x: 55, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 40 }, multiline: true });
-            return _super.call(this, "Decay Generator", NCID.decay_generator, { drawing: winMaker.content.drawing, elements: winMaker.content.elements }) || this;
+            var winMaker = new NCWindowMaker("Decay Generator", 176, 86)
+                .addScale("scaleProgress", 74, 35, "nc.prog_decay_hastener_bg", "nc.prog_decay_hastener")
+                .addSlot("input0", 55, 34, 18, "nc.slot_input")
+                .addSlot("output0", 111, 30, 26, "nc.slot_output_large")
+                .addElements("textInfo", { type: "text", x: 55, y: 60, font: { color: Color.WHITE, shadow: 0.5, size: 6 }, multiline: true });
+            return _super.call(this, "Decay Generator", NCID.decay_generator, winMaker.getContentForRV({
+                input: ["input0"],
+                output: ["output0"]
+            }, ["scaleProgress", "textInfo"])) || this;
         }
         DecayGeneratorRecipeType.prototype.getAllList = function () {
             var list = [];
@@ -3829,7 +3968,7 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
             elements.get("textInfo").setBinding("text", "Mean lifetime: ".concat(time, "\nPower gen: ").concat(data.power, " RF/s"));
         };
         return DecayGeneratorRecipeType;
-    }(api.RecipeType));
+    }(RecipeType));
     var FurnaceFuelRecipeType = /** @class */ (function (_super) {
         __extends(FurnaceFuelRecipeType, _super);
         function FurnaceFuelRecipeType() {
@@ -3860,7 +3999,7 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
             elements.get("text").setBinding("text", time + " tick\n(Smelts  " + (time / 10) + "  items)");
         };
         return FurnaceFuelRecipeType;
-    }(api.RecipeType));
+    }(RecipeType));
     api.RecipeTypeRegistry.register(NCItem.PREFIX + "fission", new FissionRecipeType());
     api.RecipeTypeRegistry.register(NCItem.PREFIX + "decay_generator", new DecayGeneratorRecipeType());
     api.RecipeTypeRegistry.register(NCItem.PREFIX + "fuel", new FurnaceFuelRecipeType());

@@ -5,17 +5,17 @@ TileRenderer.setRotationFunction(NCID.furnace);
 
 
 namespace NCWindow {
-    const winMaker = new NCWindowMaker("Nuclear Furnace", 176, 86, "nc.frame_dark_bold");
-    winMaker.addSlot("slotFuel", 55, 52, 18, "nc.slot_dark");
-    winMaker.addSlot("slotSource", 55, 16, 18, "nc.slot_dark");
-    winMaker.addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large");
-    winMaker.addScale("scaleFire", 57, 36, "nc.fire_bg", "nc.fire", WindowMaker.SCALE_UP);
-    winMaker.addScale("scaleProgress", 80, 34, "nc.prog_furnace_bg", "nc.prog_furnace");
-    winMaker.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage(["furnace", "nc_fuel"]);
-        }
-    });
+    const winMaker = new NCWindowMaker("Nuclear Furnace", 176, 86, "nc.frame_dark_bold")
+        .addSlot("slotFuel", 55, 52, 18, "nc.slot_dark")
+        .addSlot("slotSource", 55, 16, 18, "nc.slot_dark")
+        .addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large")
+        .addScale("scaleFire", 57, 36, "nc.fire_bg", "nc.fire", WindowMaker.SCALE_UP)
+        .addProgressBar("scaleProgress", 80, 34, "nc.prog_furnace_bg", "nc.prog_furnace")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage(["furnace", "nc_fuel"]);
+            }
+        });
     export const Furnace = winMaker.makeWindow();
 }
 

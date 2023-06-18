@@ -53,8 +53,8 @@
         "machine/battery/TileBattery.ts",
         "machine/battery/define.ts",
 
-        "machine/passive/PassiveItemGenerator.ts",
-        "machine/passive/PassiveFluidGenerator.ts",
+        "machine/passive/TileItemGenerator.ts",
+        "machine/passive/TileFluidGenerator.ts",
         "machine/passive/define.ts",
 
         "recipe_viewer.ts"
@@ -71,6 +71,7 @@
         "../../declarations/VanillaSlots.d.ts",
         "../../declarations/RecipeViewer.d.ts",
         "../../declarations/ConnectedTexture.d.ts",
+        "../../declarations/WindowMaker.d.ts",
         "../../declarations/EnhancedRecipes.d.ts"
     ]
 }

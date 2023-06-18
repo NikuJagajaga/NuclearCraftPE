@@ -5,23 +5,23 @@ TileRenderer.setRotationFunction(NCID.fission_controller);
 
 
 namespace NCWindow {
-    const winMaker = new NCWindowMaker("Fission Controller", 176, 97, "nc.frame_dark_bold");
-    winMaker.addSlot("slotSource", 55, 34, 18, "nc.slot_dark");
-    winMaker.addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large");
-    winMaker.addDrawing({type: "frame", x: 7, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark"});
-    winMaker.addDrawing({type: "frame", x: 17, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark"});
-    winMaker.addElements("scaleEnergy", {type: "scale", x: 8, y: 6, bitmap: "nc.fission_energy", direction: WindowMaker.SCALE_UP});
-    winMaker.addElements("scaleHeat", {type: "scale", x: 18, y: 6, bitmap: "nc.fission_heat", direction: WindowMaker.SCALE_UP});
-    winMaker.addScale("scaleProgress", 74, 35, "nc.prog_fission_bg", "nc.prog_fission");
-    winMaker.setClicker("scaleProgress", {
-        onClick: () => {
-            RV && RV.RecipeTypeRegistry.openRecipePage("nc_fission");
-        }
-    });
-    const font = {color: Color.rgb(255, 170, 0), size: 30};
-    winMaker.addElements("textTitle", {type: "text", x: 92, y: 3, font: {...font, align: UI.Font.ALIGN_CENTER}});
-    winMaker.addElements("textFuel", {type: "text", x: 32, y: 80, multiline: true, font: font});
-    winMaker.addElements("textStatus", {type: "text", x: 168, y: 80, multiline: true, font: {...font, align: UI.Font.ALIGN_END}});
+    const font = {color: Color.rgb(255, 170, 0), size: 6};
+    const winMaker = new NCWindowMaker("Fission Controller", 176, 97, "nc.frame_dark_bold")
+        .addSlot("slotSource", 55, 34, 18, "nc.slot_dark")
+        .addSlot("slotResult", 111, 30, 26, "nc.slot_dark_large")
+        .addDrawing("", {type: "frame", x: 7, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark"})
+        .addDrawing("", {type: "frame", x: 17, y: 5, width: 8, height: 87, bitmap: "nc.frame_dark"})
+        .addElements("scaleEnergy", {type: "scale", x: 8, y: 6, bitmap: "nc.fission_energy", direction: WindowMaker.SCALE_UP})
+        .addElements("scaleHeat", {type: "scale", x: 18, y: 6, bitmap: "nc.fission_heat", direction: WindowMaker.SCALE_UP})
+        .addProgressBar("scaleProgress", 74, 35, "nc.prog_fission_bg", "nc.prog_fission")
+        .setClicker("scaleProgress", {
+            onClick: () => {
+                RV && RV.RecipeTypeRegistry.openRecipePage("nc_fission");
+            }
+        })
+        .addElements("textTitle", {type: "text", x: 92, y: 3, font: {...font, align: UI.Font.ALIGN_CENTER}})
+        .addElements("textFuel", {type: "text", x: 32, y: 80, multiline: true, font: font})
+        .addElements("textStatus", {type: "text", x: 168, y: 80, multiline: true, font: {...font, align: UI.Font.ALIGN_END}});
     export const FissionController = winMaker.makeWindow();
 }
 
