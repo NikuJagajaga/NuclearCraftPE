@@ -12892,6 +12892,18 @@ declare namespace UI {
 	}
 
 	interface Element {
+        equals: (value: any) => boolean;
+        x: number;
+        y: number;
+        z: number;
+        size?: java.lang.Integer;
+        source?: ItemInstance;
+        elementRect: android.graphics.Rect;
+        isTouched: boolean;
+        isReleased: () => boolean;
+        isDarken: boolean;
+        window: Window;
+        texture: Texture;
 		/**
 		 * Creates a new [[Texture]] instance with specified [[Style]] applied.
 		 * See [[Texture.constructor]] for parameters description

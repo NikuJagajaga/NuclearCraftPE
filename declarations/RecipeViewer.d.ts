@@ -62,6 +62,12 @@ declare abstract class RecipeType {
     abstract getAllList(): RecipePattern[];
     getList(id: number, data: number, isUsage: boolean): RecipePattern[];
     onOpen(elements: java.util.HashMap<string, UI.Element>, recipe: RecipePattern): void;
+    slotTooltip(name: string, item: ItemInstance, tips: {
+        [key: string]: any;
+    }): string;
+    tankTooltip(name: string, liquid: LiquidInstance, tips: {
+        [key: string]: any;
+    }): string;
 }
 declare interface RecipeTypeRegistry {
     register(key: string, recipeType: RecipeType): void;

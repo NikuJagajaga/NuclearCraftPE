@@ -75,17 +75,60 @@ class TileBattery extends MachineBase {
             client.send("nc.clientTipMessage", {msg: "RF: " + ["Input", "Output", "None"][mode[coords.side]]});
         }
         else{
-            let energy = this.data.energy;
-            let storage = this.getEnergyStorage();
-            let scale = 0;
-            while(energy > 10000){
-                energy = energy / 1000 | 0;
-                storage = storage / 1000 | 0;
-                scale++;
-            }
-            client.send("nc.clientTipMessage", {msg: `Energy Stored: ${energy} / ${storage} ${["", "k", "M", "G"][scale]}RF`});
+            client.send("nc.watchBattery", {x: this.x, y: this.y, z: this.z});
         }
         return true;
     }
 
 }
+
+
+Network.addClientPacket("nc.watchBattery", (data: {x: number, y: number, z: number}) => {
+
+    if(Threading.getThread("nc_watchBattery")){
+        return;
+    }
+
+    Threading.initThread("nc_watchBattery", () => {
+
+        let pointed: {pos: BlockPosition, vec: Vector, block: Tile, entity: number};
+        let battery: TileBattery;
+        let energy = 0;
+        let storage = 0;
+        let scale = 0;
+
+        while(true){
+
+            pointed = Player.getPointed();
+
+            if(pointed.pos.x != data.x || pointed.pos.y != data.y || pointed.pos.z != data.z){
+                break;
+            }
+
+            battery = World.getTileEntity(data.x, data.y, data.z) as TileBattery;
+
+            if(!battery){
+                break;
+            }
+
+            energy = battery.data.energy;
+            storage = battery.getEnergyStorage();
+            scale = 0;
+
+            while(energy > 10000){
+                energy = energy / 1000 | 0;
+                storage = storage / 1000 | 0;
+                scale++;
+            }
+
+            Game.tipMessage(`Energy Stored: ${energy} / ${storage} ${["", "k", "M", "G"][scale]}RF`);
+
+            java.lang.Thread.sleep(500);
+
+        }
+
+        Game.tipMessage("");
+
+    });
+
+});

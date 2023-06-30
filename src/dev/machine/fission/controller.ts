@@ -301,6 +301,13 @@ class TileFissionController extends GeneratorBase {
 
 MachineRegistry.registerPrototype(NCID.fission_controller, new TileFissionController());
 
+StorageInterface.createInterface(NCID.fission_controller, {
+    slots: {
+        slotSource: {input: true, isValid: item => FissionFuel.isFuel(item.id) && item.data === 0},
+        slotResult: {output: true}
+    }
+});
+
 
 Callback.addCallback("PreLoaded", () => {
     Recipes2.addShaped(NCID.fission_controller, "aba:cdc:aba", {

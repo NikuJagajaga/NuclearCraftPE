@@ -54,11 +54,7 @@ class NuclearFurnace extends MachineBase {
     }
 
     setupContainer(): void {
-        StorageInterface.setGlobalValidatePolicy(this.container, (name, id, amount, data) => {
-            if(name === "slotSource") return !!Recipes.getFurnaceRecipeResult(id, data);
-            if(name === "slotFuel") return id in NuclearFurnace.FuelData && data === 0;
-            return false;
-        });
+        StorageInterface.setGlobalValidatePolicy(this.container, MachineRegistry.getGlobalValidatePolicy(this.blockID));
     }
 
     consumeFuel(): void {
@@ -143,9 +139,9 @@ TileEntity.registerPrototype(NCID.furnace, new NuclearFurnace());
 
 StorageInterface.createInterface(NCID.furnace, {
     slots: {
-        "slotSource": {input: true, side: "up", isValid: (item: ItemInstance) => !!Recipes.getFurnaceRecipeResult(item.id, item.data)},
-        "slotFuel": {input: true, side: "horizontal", isValid: (item: ItemInstance) => item.id in NuclearFurnace.FuelData && item.data === 0},
-        "slotResult": {output: true}
+        slotSource: {input: true, side: "up", isValid: item => !!Recipes.getFurnaceRecipeResult(item.id, item.data)},
+        slotFuel: {input: true, side: "horizontal", isValid: item => item.id in NuclearFurnace.FuelData && item.data === 0},
+        slotResult: {output: true}
     }
 });
 

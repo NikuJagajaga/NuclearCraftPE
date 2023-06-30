@@ -24,7 +24,8 @@ Callback.addCallback("PreLoaded", () => {
     addCombineRecipe([NCID.dust_lithium, NCID.ingot_lithium], 1, [NCID.dust_manganese_dioxide, NCID.ingot_manganese_dioxide], 1, {id: NCID.alloy_LiMnO2, count: 2}, 1.5, 1);
     addCombineRecipe([NCID.dust_copper, NCID.ingot_copper], 3, [NCID.dust_silver, NCID.ingot_silver], 1, {id: NCID.alloy_shibuichi, count: 4}, 1.5, 0.5);
     addCombineRecipe([NCID.dust_tin, NCID.ingot_tin], 3, [NCID.dust_silver, NCID.ingot_silver], 1, {id: NCID.alloy_tin_silver, count: 4}, 1.5, 0.5);
-    //addCombineRecipe([NCID.dust_lead, NCID.ingot_lead], 3, [], 1, {id: NCID.alloy_lead_platinum, count: 4}, 1.5, 0.5);
+/**/handler.add({id: NCID.ingot_lead, count: 3}, "gold_ingot", {id: NCID.alloy_lead_platinum, count: 4}, 1.5, 0.5);
+/**/handler.add({id: NCID.dust_lead, count: 3, data: 0}, "gold_ingot", {id: NCID.alloy_lead_platinum, count: 4}, 1.5, 0.5);
     handler.add(NCID.alloy_tough, NCID.alloy_hard_carbon, NCID.alloy_extreme, 2, 2);
     handler.add(NCID.alloy_extreme, NCID.gem_boron_arsenide, {id: NCID.alloy_thermal, count: 2}, 1.5, 1.5);
     addCombineRecipe([NCID.dust_zirconium, NCID.ingot_zirconium], 7, [NCID.dust_tin, NCID.ingot_tin], 1, {id: NCID.alloy_zircaloy, count: 8}, 4, 1);

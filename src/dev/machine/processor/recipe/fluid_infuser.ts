@@ -11,11 +11,11 @@ Callback.addCallback("PreLoaded", () => {
     handler.add(NCID.cooler_empty, ["liquid_helium:1000"], NCID.cooler_helium);
     //cooler_cryotheum
 
-    //water source
-    //cobblestone generator
+    handler.add(NCID.empty_frame, ["water:2000"], NCID.passive_water);
+    handler.add(NCID.passive_water, ["lava:1000"], NCID.passive_cobblestone);
 
-    //handler.add("sandstone", ["ender:250"], "end_stone");
-    //handler.add("red_sandstone", ["ender:250"], "end_stone");
+    handler.add("sandstone", ["molten_ender:250"], "end_stone");
+    handler.add("red_sandstone", ["molten_ender:250"], "end_stone");
 
     for(let i = 0; i < 16; i++){
         handler.add({id: "concrete_powder", data: i}, ["water:1000"], "concrete", 0.5, 0.5);
@@ -25,6 +25,8 @@ Callback.addCallback("PreLoaded", () => {
     handler.add("grass", ["water:2000"], "clay_ball");
     handler.add("brick", ["water:2000"], "clay");
     handler.add("hardened_clay", ["water:4000"], "clay", 4, 1);
+
+    handler.add(NCID.alloy_lead_platinum, ["molten_ender:250"], NCID.alloy_enderium);
 
     const OXIDIZING_VOLUME = 400;
 

@@ -119,3 +119,5 @@ FluidRegistry.register("molten_alugentum", "Molten Alugentum", "MOLTEN", "#B5C9C
 FluidRegistry.register("molten_alumina", "Molten Alumina", "MOLTEN", "#919880");
 FluidRegistry.register("molten_aluminum", "Molten Aluminum", "MOLTEN", "#B5ECD5");
 FluidRegistry.register("molten_silver", "Molten Silver", "MOLTEN", "#E2DAF6");
+
+FluidRegistry.register("molten_ender", "Resonant Ender");

@@ -9,7 +9,12 @@ class ProcessorInterface implements StorageDescriptor {
         this.liquidUnitRatio = 0.001;
         this.slots = {};
         for(let i = 0; i < inSlotSize; i++){
-            this.slots["input" + i] = {input: true};
+            this.slots["input" + i] = {
+                input: true,
+                isValid: (item, side, tileEntity) => {
+                    return true;
+                }
+            };
         }
         for(let i = 0; i < outSlotSize; i++){
             this.slots["output" + i] = {output: true};
@@ -35,7 +40,7 @@ class ProcessorInterface implements StorageDescriptor {
         }
         const tanks = this.tileEntity.getOutputTanks();
         for(let i = 0; i < tanks.length; i++){
-            if(!tanks[i].isFull()){
+            if(!tanks[i].isEmpty()){
                 return tanks[i];
             }
         }
@@ -43,6 +48,10 @@ class ProcessorInterface implements StorageDescriptor {
     }
 
     canReceiveLiquid(liquid: string, side: number): boolean {
+        return true;
+    }
+
+    canTransportLiquid(liquid: string, side: number): boolean {
         return true;
     }
 

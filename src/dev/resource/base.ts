@@ -55,7 +55,8 @@ Item.addCreativeGroup("ingot", Translation.translate("Ingots"), [
     NCItem.createItem("alloy_zircaloy", "Zircaloy"),
     NCItem.createItem("alloy_SiC", "Silicon Carbide Alloy"),
     NCItem.createItem("alloy_sic_sic_cmc", "SiC-SiC Ceramic Matrix Composite"),
-    NCItem.createItem("alloy_hsla_steel", "HSLA Steel Alloy")
+    NCItem.createItem("alloy_hsla_steel", "HSLA Steel Alloy"),
+    NCItem.createItem("alloy_enderium", "Enderium Ingot", "ingotEnderium")
 ]);
 
 class ItemDustWithTiny extends NCItem.ItemInstance {

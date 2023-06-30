@@ -105,6 +105,17 @@ Callback.addCallback("PreLoaded", () => {
         b: NCID.cooler_empty
     });
 
+    Recipes2.addShaped(NCID.cooler_enderium, "aaa:aba:aaa", {
+        a: NCID.alloy_enderium,
+        b: NCID.cooler_empty
+    });
+
+    Recipes2.addShaped(NCID.cooler_cryotheum, "aaa:bcb:aaa", {
+        a: "blue_ice",
+        b: "redstone",
+        c: NCID.cooler_empty
+    });
+
     Recipes2.addShaped(NCID.cooler_iron, "aaa:aba:aaa", {
         a: "iron_ingot",
         b: NCID.cooler_empty

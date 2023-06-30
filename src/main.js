@@ -255,6 +255,25 @@ var MachineRegistry = /** @class */ (function () {
         EnergyTileRegistry.addEnergyTypeForId(id, RF);
         ICRender.getGroup("rf-wire").add(id, -1);
     };
+    MachineRegistry.getGlobalValidatePolicy = function (machineId) {
+        var descriptor = StorageInterface.getData(machineId) || {};
+        if (descriptor.slots) {
+            return function (name, id, amount, data, extra, container, player) {
+                var slotData = descriptor.slots[name];
+                if (slotData) {
+                    if (slotData.input) {
+                        if (slotData.isValid) {
+                            return slotData.isValid({ id: id, count: amount, data: data, extra: extra }, -1, null);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                return true;
+            };
+        }
+        return function () { return true; };
+    };
     return MachineRegistry;
 }());
 var NCWindowMaker = /** @class */ (function (_super) {
@@ -753,6 +772,20 @@ var ProcessorWindowMaker = /** @class */ (function (_super) {
         //energy scale
         _this.addDrawing("", { type: "frame", x: 7, y: 5, width: 18, height: 76, bitmap: "nc.frame" });
         _this.addElements("scaleEnergy", { type: "scale", x: 8, y: 6, bitmap: "nc.energy", direction: WindowMaker.SCALE_UP });
+        /*
+                this.setTooltipFunc("scaleEnergy", (elem: UI.Element) => {
+        
+                    const tile = elem.window.getContainer().getParent().getParent();
+        
+                    const arr = [];
+                    for(let key in tile)arr.push(key);
+                    Game.message(arr.join(", "));
+        
+                    return (tile.getEnergyStorage() + " RF");
+                    //return `${tile.data.energy} / ${tile.getEnergyStorage()} RF`;
+        
+                });
+        */
         //upgrade slot
         _this.addSlot("slotUpgSpeed", 131, 63, 18, "nc.slot_upg_speed");
         _this.addSlot("slotUpgEnergy", 151, 63, 18, "nc.slot_upg_energy");
@@ -766,7 +799,12 @@ var ProcessorInterface = /** @class */ (function () {
         this.liquidUnitRatio = 0.001;
         this.slots = {};
         for (var i = 0; i < inSlotSize; i++) {
-            this.slots["input" + i] = { input: true };
+            this.slots["input" + i] = {
+                input: true,
+                isValid: function (item, side, tileEntity) {
+                    return true;
+                }
+            };
         }
         for (var i = 0; i < outSlotSize; i++) {
             this.slots["output" + i] = { output: true };
@@ -790,13 +828,16 @@ var ProcessorInterface = /** @class */ (function () {
         }
         var tanks = this.tileEntity.getOutputTanks();
         for (var i = 0; i < tanks.length; i++) {
-            if (!tanks[i].isFull()) {
+            if (!tanks[i].isEmpty()) {
                 return tanks[i];
             }
         }
         return null;
     };
     ProcessorInterface.prototype.canReceiveLiquid = function (liquid, side) {
+        return true;
+    };
+    ProcessorInterface.prototype.canTransportLiquid = function (liquid, side) {
         return true;
     };
     return ProcessorInterface;
@@ -1211,7 +1252,8 @@ Item.addCreativeGroup("ingot", Translation.translate("Ingots"), [
     NCItem.createItem("alloy_zircaloy", "Zircaloy"),
     NCItem.createItem("alloy_SiC", "Silicon Carbide Alloy"),
     NCItem.createItem("alloy_sic_sic_cmc", "SiC-SiC Ceramic Matrix Composite"),
-    NCItem.createItem("alloy_hsla_steel", "HSLA Steel Alloy")
+    NCItem.createItem("alloy_hsla_steel", "HSLA Steel Alloy"),
+    NCItem.createItem("alloy_enderium", "Enderium Ingot", "ingotEnderium")
 ]);
 var ItemDustWithTiny = /** @class */ (function (_super) {
     __extends(ItemDustWithTiny, _super);
@@ -1537,6 +1579,15 @@ Callback.addCallback("PreLoaded", function () {
         a: "diamond",
         b: NCID.cooler_empty
     });
+    Recipes2.addShaped(NCID.cooler_enderium, "aaa:aba:aaa", {
+        a: NCID.alloy_enderium,
+        b: NCID.cooler_empty
+    });
+    Recipes2.addShaped(NCID.cooler_cryotheum, "aaa:bcb:aaa", {
+        a: "blue_ice",
+        b: "redstone",
+        c: NCID.cooler_empty
+    });
     Recipes2.addShaped(NCID.cooler_iron, "aaa:aba:aaa", {
         a: "iron_ingot",
         b: NCID.cooler_empty
@@ -1696,6 +1747,7 @@ FluidRegistry.register("molten_alugentum", "Molten Alugentum", "MOLTEN", "#B5C9C
 FluidRegistry.register("molten_alumina", "Molten Alumina", "MOLTEN", "#919880");
 FluidRegistry.register("molten_aluminum", "Molten Aluminum", "MOLTEN", "#B5ECD5");
 FluidRegistry.register("molten_silver", "Molten Silver", "MOLTEN", "#E2DAF6");
+FluidRegistry.register("molten_ender", "Resonant Ender");
 var ReactorPartRegistry = /** @class */ (function () {
     function ReactorPartRegistry() {
     }
@@ -2459,6 +2511,12 @@ var TileFissionController = /** @class */ (function (_super) {
     return TileFissionController;
 }(GeneratorBase));
 MachineRegistry.registerPrototype(NCID.fission_controller, new TileFissionController());
+StorageInterface.createInterface(NCID.fission_controller, {
+    slots: {
+        slotSource: { input: true, isValid: function (item) { return FissionFuel.isFuel(item.id) && item.data === 0; } },
+        slotResult: { output: true }
+    }
+});
 Callback.addCallback("PreLoaded", function () {
     Recipes2.addShaped(NCID.fission_controller, "aba:cdc:aba", {
         a: NCID.plate_adv,
@@ -2704,13 +2762,7 @@ var NuclearFurnace = /** @class */ (function (_super) {
         return NCWindow.Furnace;
     };
     NuclearFurnace.prototype.setupContainer = function () {
-        StorageInterface.setGlobalValidatePolicy(this.container, function (name, id, amount, data) {
-            if (name === "slotSource")
-                return !!Recipes.getFurnaceRecipeResult(id, data);
-            if (name === "slotFuel")
-                return id in NuclearFurnace.FuelData && data === 0;
-            return false;
-        });
+        StorageInterface.setGlobalValidatePolicy(this.container, MachineRegistry.getGlobalValidatePolicy(this.blockID));
     };
     NuclearFurnace.prototype.consumeFuel = function () {
         var slotFuel = this.container.getSlot("slotFuel");
@@ -2798,9 +2850,9 @@ ToolAPI.registerBlockMaterial(NCID.furnace, "stone");
 TileEntity.registerPrototype(NCID.furnace, new NuclearFurnace());
 StorageInterface.createInterface(NCID.furnace, {
     slots: {
-        "slotSource": { input: true, side: "up", isValid: function (item) { return !!Recipes.getFurnaceRecipeResult(item.id, item.data); } },
-        "slotFuel": { input: true, side: "horizontal", isValid: function (item) { return item.id in NuclearFurnace.FuelData && item.data === 0; } },
-        "slotResult": { output: true }
+        slotSource: { input: true, side: "up", isValid: function (item) { return !!Recipes.getFurnaceRecipeResult(item.id, item.data); } },
+        slotFuel: { input: true, side: "horizontal", isValid: function (item) { return item.id in NuclearFurnace.FuelData && item.data === 0; } },
+        slotResult: { output: true }
     }
 });
 Callback.addCallback("PreLoaded", function () {
@@ -3195,7 +3247,8 @@ Callback.addCallback("PreLoaded", function () {
     addCombineRecipe([NCID.dust_lithium, NCID.ingot_lithium], 1, [NCID.dust_manganese_dioxide, NCID.ingot_manganese_dioxide], 1, { id: NCID.alloy_LiMnO2, count: 2 }, 1.5, 1);
     addCombineRecipe([NCID.dust_copper, NCID.ingot_copper], 3, [NCID.dust_silver, NCID.ingot_silver], 1, { id: NCID.alloy_shibuichi, count: 4 }, 1.5, 0.5);
     addCombineRecipe([NCID.dust_tin, NCID.ingot_tin], 3, [NCID.dust_silver, NCID.ingot_silver], 1, { id: NCID.alloy_tin_silver, count: 4 }, 1.5, 0.5);
-    //addCombineRecipe([NCID.dust_lead, NCID.ingot_lead], 3, [], 1, {id: NCID.alloy_lead_platinum, count: 4}, 1.5, 0.5);
+    /**/ handler.add({ id: NCID.ingot_lead, count: 3 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
+    /**/ handler.add({ id: NCID.dust_lead, count: 3, data: 0 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
     handler.add(NCID.alloy_tough, NCID.alloy_hard_carbon, NCID.alloy_extreme, 2, 2);
     handler.add(NCID.alloy_extreme, NCID.gem_boron_arsenide, { id: NCID.alloy_thermal, count: 2 }, 1.5, 1.5);
     addCombineRecipe([NCID.dust_zirconium, NCID.ingot_zirconium], 7, [NCID.dust_tin, NCID.ingot_tin], 1, { id: NCID.alloy_zircaloy, count: 8 }, 4, 1);
@@ -3282,10 +3335,10 @@ Callback.addCallback("PreLoaded", function () {
     handler.add(NCID.cooler_empty, ["water:1000"], NCID.cooler_water);
     handler.add(NCID.cooler_empty, ["liquid_helium:1000"], NCID.cooler_helium);
     //cooler_cryotheum
-    //water source
-    //cobblestone generator
-    //handler.add("sandstone", ["ender:250"], "end_stone");
-    //handler.add("red_sandstone", ["ender:250"], "end_stone");
+    handler.add(NCID.empty_frame, ["water:2000"], NCID.passive_water);
+    handler.add(NCID.passive_water, ["lava:1000"], NCID.passive_cobblestone);
+    handler.add("sandstone", ["molten_ender:250"], "end_stone");
+    handler.add("red_sandstone", ["molten_ender:250"], "end_stone");
     for (var i = 0; i < 16; i++) {
         handler.add({ id: "concrete_powder", data: i }, ["water:1000"], "concrete", 0.5, 0.5);
     }
@@ -3293,6 +3346,7 @@ Callback.addCallback("PreLoaded", function () {
     handler.add("grass", ["water:2000"], "clay_ball");
     handler.add("brick", ["water:2000"], "clay");
     handler.add("hardened_clay", ["water:4000"], "clay", 4, 1);
+    handler.add(NCID.alloy_lead_platinum, ["molten_ender:250"], NCID.alloy_enderium);
     var OXIDIZING_VOLUME = 400;
     var addOxidizingRecipes = function (initial) {
         var nums = [];
@@ -3474,6 +3528,12 @@ Callback.addCallback("PreLoaded", function () {
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.melter);
+    handler.add(NCID.dust_sulfur, ["molten_sulfur:666"]);
+    handler.add(NCID.comp_NaOH, ["molten_NaOH:666"]);
+    handler.add(NCID.comp_KOH, ["molten_KOH:666"]);
+    handler.add(NCID.dust_arsenic, ["molten_arsenic:666"]);
+    handler.add(NCID.gem_boron_arsenide, ["molten_BAs:666"]);
+    handler.add("ender_pearl", ["molten_ender:250"], 0.5, 1.5);
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.neutron_irradiator);
@@ -3572,15 +3632,7 @@ var TileBattery = /** @class */ (function (_super) {
             client.send("nc.clientTipMessage", { msg: "RF: " + ["Input", "Output", "None"][mode[coords.side]] });
         }
         else {
-            var energy = this.data.energy;
-            var storage = this.getEnergyStorage();
-            var scale = 0;
-            while (energy > 10000) {
-                energy = energy / 1000 | 0;
-                storage = storage / 1000 | 0;
-                scale++;
-            }
-            client.send("nc.clientTipMessage", { msg: "Energy Stored: ".concat(energy, " / ").concat(storage, " ").concat(["", "k", "M", "G"][scale], "RF") });
+            client.send("nc.watchBattery", { x: this.x, y: this.y, z: this.z });
         }
         return true;
     };
@@ -3589,6 +3641,39 @@ var TileBattery = /** @class */ (function (_super) {
     ], TileBattery.prototype, "renderModel", null);
     return TileBattery;
 }(MachineBase));
+Network.addClientPacket("nc.watchBattery", function (data) {
+    if (Threading.getThread("nc_watchBattery")) {
+        return;
+    }
+    Threading.initThread("nc_watchBattery", function () {
+        var pointed;
+        var battery;
+        var energy = 0;
+        var storage = 0;
+        var scale = 0;
+        while (true) {
+            pointed = Player.getPointed();
+            if (pointed.pos.x != data.x || pointed.pos.y != data.y || pointed.pos.z != data.z) {
+                break;
+            }
+            battery = World.getTileEntity(data.x, data.y, data.z);
+            if (!battery) {
+                break;
+            }
+            energy = battery.data.energy;
+            storage = battery.getEnergyStorage();
+            scale = 0;
+            while (energy > 10000) {
+                energy = energy / 1000 | 0;
+                storage = storage / 1000 | 0;
+                scale++;
+            }
+            Game.tipMessage("Energy Stored: ".concat(energy, " / ").concat(storage, " ").concat(["", "k", "M", "G"][scale], "RF"));
+            java.lang.Thread.sleep(500);
+        }
+        Game.tipMessage("");
+    });
+});
 Item.addCreativeGroup("nc_battery", "Battery", [
     NCItem.createBlock("volpile_basic", "Basic Voltaic Pile", [0, 0, 3]),
     NCItem.createBlock("volpile_adv", "Advanced Voltaic Pile", [0, 0, 3]),
