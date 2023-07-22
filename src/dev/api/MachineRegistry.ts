@@ -8,7 +8,7 @@ class MachineRegistry {
         ICRender.getGroup("rf-wire").add(id, -1);
     }
 
-    static getGlobalValidatePolicy(machineId: number): (name: string, id: number, amount: number, data: number, extra: ItemExtraData, container: ItemContainer, playerUid: number) => boolean {
+    static getGlobalValidatePolicy(machineId: number): GlobalValidatePolicyFunc {
         const descriptor = StorageInterface.getData(machineId) || {};
         if(descriptor.slots){
             return (name, id, amount, data, extra, container, player) => {

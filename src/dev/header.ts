@@ -41,6 +41,7 @@ Network.addClientPacket("nc.clientTipMessage", function(data: {msg: string}) {
 });
 
 type VanillaID = keyof typeof VanillaBlockID | keyof typeof VanillaItemID;
+type GlobalValidatePolicyFunc = (name: string, id: number, amount: number, data: number, extra: ItemExtraData, container: ItemContainer, playerUid: number) => boolean;
 
 
 Array.prototype.includes = function(elem){

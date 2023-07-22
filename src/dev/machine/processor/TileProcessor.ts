@@ -35,18 +35,14 @@ class TileProcessor extends ProcessorBase {
     }
 
     setupContainer(): void {
+        const liquids = this.getRecipeHandler().getValidInputLiquids();
         for(let i = 0; i < this.inputTankSize; i++){
-            this["inputLiq" + i] = this.addLiquidTank("inputLiq" + i, 16000);
+            this["inputLiq" + i] = this.addLiquidTank("inputLiq" + i, 16000, liquids);
         }
         for(let i = 0; i < this.outputTankSize; i++){
             this["outputLiq" + i] = this.addLiquidTank("outputLiq" + i, 16000);
         }
-        StorageInterface.setGlobalValidatePolicy(this.container, (name, id, amount, data) => {
-            if(name.startsWith("input")) return true;
-            if(name === "slotUpgSpeed") return id === ItemID.nc_upg_speed;
-            if(name === "slotUpgEnergy") return id === ItemID.nc_upg_energy;
-            return false;
-        });
+        StorageInterface.setGlobalValidatePolicy(this.container, this.getRecipeHandler().globalValidatePolicy);
     }
 
     getInputSlots(): ItemContainerSlot[] {

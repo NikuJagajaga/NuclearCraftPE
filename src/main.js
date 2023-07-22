@@ -491,21 +491,14 @@ var TileProcessor = /** @class */ (function (_super) {
         return ProcessorRegistry.getRecipeHandler(this.blockID);
     };
     TileProcessor.prototype.setupContainer = function () {
+        var liquids = this.getRecipeHandler().getValidInputLiquids();
         for (var i = 0; i < this.inputTankSize; i++) {
-            this["inputLiq" + i] = this.addLiquidTank("inputLiq" + i, 16000);
+            this["inputLiq" + i] = this.addLiquidTank("inputLiq" + i, 16000, liquids);
         }
         for (var i = 0; i < this.outputTankSize; i++) {
             this["outputLiq" + i] = this.addLiquidTank("outputLiq" + i, 16000);
         }
-        StorageInterface.setGlobalValidatePolicy(this.container, function (name, id, amount, data) {
-            if (name.startsWith("input"))
-                return true;
-            if (name === "slotUpgSpeed")
-                return id === ItemID.nc_upg_speed;
-            if (name === "slotUpgEnergy")
-                return id === ItemID.nc_upg_energy;
-            return false;
-        });
+        StorageInterface.setGlobalValidatePolicy(this.container, this.getRecipeHandler().globalValidatePolicy);
     };
     TileProcessor.prototype.getInputSlots = function () {
         var slots = [];
@@ -795,18 +788,27 @@ var ProcessorWindowMaker = /** @class */ (function (_super) {
     return ProcessorWindowMaker;
 }(NCWindowMaker));
 var ProcessorInterface = /** @class */ (function () {
-    function ProcessorInterface(inSlotSize, inTankSize, outSlotSize, outTankSize) {
+    function ProcessorInterface(inputSlotSize, inputTankSize, outputSlotSize, outputTankSize) {
         this.liquidUnitRatio = 0.001;
+        this.inputSlotSize = inputSlotSize;
+        this.inputTankSize = inputTankSize;
+        this.outputSlotSize = outputSlotSize;
+        this.outputTankSize = outputTankSize;
         this.slots = {};
-        for (var i = 0; i < inSlotSize; i++) {
-            this.slots["input" + i] = {
+        var _loop_1 = function (i) {
+            this_1.slots["input" + i] = {
                 input: true,
                 isValid: function (item, side, tileEntity) {
-                    return true;
+                    var recipes = tileEntity.getRecipeHandler().getAll();
+                    return recipes.some(function (recipe) { return recipe.input[i].id === item.id && (recipe.input[i].data === -1 || recipe.input[i].data === item.data); });
                 }
             };
+        };
+        var this_1 = this;
+        for (var i = 0; i < this.inputSlotSize; i++) {
+            _loop_1(i);
         }
-        for (var i = 0; i < outSlotSize; i++) {
+        for (var i = 0; i < this.outputSlotSize; i++) {
             this.slots["output" + i] = { output: true };
         }
     }
@@ -835,16 +837,44 @@ var ProcessorInterface = /** @class */ (function () {
         return null;
     };
     ProcessorInterface.prototype.canReceiveLiquid = function (liquid, side) {
-        return true;
+        var _this = this;
+        if (this.inputTankSize === 0)
+            return false;
+        var recHandler = this.tileEntity.getRecipeHandler();
+        return recHandler.getAll().some(function (recipe) {
+            for (var i = 0; i < _this.inputTankSize; i++) {
+                if (recipe.inputLiq[i].liquid === liquid) {
+                    return true;
+                }
+            }
+            return false;
+        });
     };
     ProcessorInterface.prototype.canTransportLiquid = function (liquid, side) {
-        return true;
+        return this.outputTankSize > 0;
     };
     return ProcessorInterface;
 }());
 var ProcessorRecipeHandler = /** @class */ (function () {
     function ProcessorRecipeHandler(inputSlotSize, inputTankSize, outputSlotSize, outputTankSize) {
+        var _this = this;
         this.recipes = [];
+        this.globalValidatePolicy = function (name, id, amount, data) {
+            if (name === "slotUpgSpeed")
+                return id === ItemID.nc_upg_speed;
+            if (name === "slotUpgEnergy")
+                return id === ItemID.nc_upg_energy;
+            if (name.startsWith("input") && _this.inputSlotSize > 0)
+                return _this.recipes.some(function (recipe) {
+                    for (var i = 0; i < _this.inputSlotSize; i++) {
+                        if (recipe.input[i].id === id && (recipe.input[i].data === -1 || recipe.input[i].data === data)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            return false;
+        };
         this.inputSlotSize = inputSlotSize;
         this.inputTankSize = inputTankSize;
         this.outputSlotSize = outputSlotSize;
@@ -956,12 +986,13 @@ var ProcessorRecipeHandler = /** @class */ (function () {
         return this.recipes;
     };
     ProcessorRecipeHandler.prototype.get = function (slots, tanks) {
+        var _this = this;
         var find = this.recipes.find(function (recipe) {
             var indexes = [];
             var index;
             if (recipe.input) {
                 var item_1;
-                for (var i = 0; i < recipe.input.length; i++) {
+                for (var i = 0; i < _this.inputSlotSize; i++) {
                     item_1 = recipe.input[i];
                     index = slots.findIndex(function (slot, j) { return indexes.indexOf(j) === -1 && slot.id === item_1.id && (item_1.data === -1 || slot.data === item_1.data) && slot.count >= item_1.count; });
                     if (index === -1) {
@@ -973,7 +1004,7 @@ var ProcessorRecipeHandler = /** @class */ (function () {
             indexes.length = 0;
             if (recipe.inputLiq) {
                 var liquid_1;
-                for (var i = 0; i < recipe.inputLiq.length; i++) {
+                for (var i = 0; i < _this.inputTankSize; i++) {
                     liquid_1 = recipe.inputLiq[i];
                     index = tanks.findIndex(function (tank, j) { return indexes.indexOf(j) === -1 && tank.getLiquidStored() === liquid_1.liquid && tank.getAmount() >= liquid_1.amount; });
                     if (index === -1) {
@@ -991,6 +1022,20 @@ var ProcessorRecipeHandler = /** @class */ (function () {
     };
     ProcessorRecipeHandler.prototype.getMaxPower = function () {
         return this.maxPower;
+    };
+    ProcessorRecipeHandler.prototype.getValidInputLiquids = function () {
+        var _this = this;
+        var liquids = [];
+        if (this.inputTankSize > 0) {
+            this.recipes.some(function (recipe) {
+                for (var i = 0; i < _this.inputTankSize; i++) {
+                    if (!liquids.includes(recipe.inputLiq[i].liquid)) {
+                        liquids.push(recipe.inputLiq[i].liquid);
+                    }
+                }
+            });
+        }
+        return liquids;
     };
     return ProcessorRecipeHandler;
 }());

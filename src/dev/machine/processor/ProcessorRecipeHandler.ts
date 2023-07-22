@@ -134,7 +134,7 @@ class ProcessorRecipeHandler {
             let index: number;
             if(recipe.input){
                 let item: ItemInstance;
-                for(let i = 0; i < recipe.input.length; i++){
+                for(let i = 0; i < this.inputSlotSize; i++){
                     item = recipe.input[i];
                     index = slots.findIndex((slot, j) => indexes.indexOf(j) === -1 && slot.id === item.id && (item.data === -1 || slot.data === item.data) && slot.count >= item.count);
                     if(index === -1){
@@ -146,7 +146,7 @@ class ProcessorRecipeHandler {
             indexes.length = 0;
             if(recipe.inputLiq){
                 let liquid: LiquidInstance;
-                for(let i = 0; i < recipe.inputLiq.length; i++){
+                for(let i = 0; i < this.inputTankSize; i++){
                     liquid = recipe.inputLiq[i];
                     index = tanks.findIndex((tank, j) => indexes.indexOf(j) === -1 && tank.getLiquidStored() === liquid.liquid && tank.getAmount() >= liquid.amount);
                     if(index === -1){
@@ -166,6 +166,42 @@ class ProcessorRecipeHandler {
 
     getMaxPower(): number {
         return this.maxPower;
+    }
+
+    getValidInputLiquids(): string[] {
+
+        const liquids: string[] = [];
+
+        if(this.inputTankSize > 0){
+            this.recipes.some(recipe => {
+                for(let i = 0; i < this.inputTankSize; i++){
+                    if(!liquids.includes(recipe.inputLiq[i].liquid)){
+                        liquids.push(recipe.inputLiq[i].liquid);
+                    }
+                }
+            });
+        }
+
+        return liquids;
+
+    }
+
+    globalValidatePolicy: GlobalValidatePolicyFunc = (name, id, amount, data) => {
+
+        if(name === "slotUpgSpeed") return id === ItemID.nc_upg_speed;
+        if(name === "slotUpgEnergy") return id === ItemID.nc_upg_energy;
+
+        if(name.startsWith("input") && this.inputSlotSize > 0) return this.recipes.some(recipe => {
+            for(let i = 0; i < this.inputSlotSize; i++){
+                if(recipe.input[i].id === id && (recipe.input[i].data === -1 || recipe.input[i].data === data)){
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        return false;
+        
     }
 
 }
