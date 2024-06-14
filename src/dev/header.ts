@@ -44,11 +44,6 @@ type VanillaID = keyof typeof VanillaBlockID | keyof typeof VanillaItemID;
 type GlobalValidatePolicyFunc = (name: string, id: number, amount: number, data: number, extra: ItemExtraData, container: ItemContainer, playerUid: number) => boolean;
 
 
-Array.prototype.includes = function(elem){
-    return this.indexOf(elem) !== -1;
-};
-
-
 /*
 const LiquidItemRegistry_isEmptyItem = (id: number, data: number): boolean => {
     for(let key in LiquidItemRegistry.FullByEmpty){

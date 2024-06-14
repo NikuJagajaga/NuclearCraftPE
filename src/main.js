@@ -73,9 +73,6 @@ var getLiquidByTex = function (texture) {
 Network.addClientPacket("nc.clientTipMessage", function (data) {
     Game.tipMessage(data.msg);
 });
-Array.prototype.includes = function (elem) {
-    return this.indexOf(elem) !== -1;
-};
 /*
 const LiquidItemRegistry_isEmptyItem = (id: number, data: number): boolean => {
     for(let key in LiquidItemRegistry.FullByEmpty){
@@ -90,7 +87,7 @@ const LiquidItemRegistry_isEmptyItem = (id: number, data: number): boolean => {
     }
     return false;
 }
-*/ 
+*/
 __config__.checkAndRestore({
     SlotsLikeVanilla: false,
     ore_copper: { enabled: true, rate: 5, size: 6, minY: 0, maxY: 48 },
@@ -899,7 +896,7 @@ var ProcessorRecipeHandler = /** @class */ (function () {
         }
         if (typeof item.id === "string") {
             pair = IDConverter.getIDData(item.id);
-            return { id: pair.id, count: item.count || 1, data: pair.data || defData, chance: item.chance };
+            return { id: pair.id, count: item.count || 1, data: item.data || pair.data || defData, chance: item.chance };
         }
         return null;
     };
@@ -1029,7 +1026,7 @@ var ProcessorRecipeHandler = /** @class */ (function () {
         if (this.inputTankSize > 0) {
             this.recipes.some(function (recipe) {
                 for (var i = 0; i < _this.inputTankSize; i++) {
-                    if (!liquids.includes(recipe.inputLiq[i].liquid)) {
+                    if (liquids.indexOf(recipe.inputLiq[i].liquid) === -1) {
                         liquids.push(recipe.inputLiq[i].liquid);
                     }
                 }
@@ -1891,7 +1888,7 @@ var ReactorModerator = /** @class */ (function (_super) {
         return _this;
     }
     ReactorModerator.prototype.isActive = function () {
-        return this.getNearParts().includes("cell");
+        return this.getNearParts().indexOf("cell") !== -1;
     };
     return ReactorModerator;
 }(ReactorPart));
@@ -1907,7 +1904,7 @@ var ReactorCooler;
         Base.prototype.isActive = function () {
             var parts = this.getNearParts();
             for (var i = 0; i < this.target.length; i++) {
-                if (!parts.includes(this.target[i])) {
+                if (parts.indexOf(this.target[i]) === -1) {
                     return false;
                 }
             }
@@ -1930,7 +1927,7 @@ var ReactorCooler;
         }
         Water.prototype.isActive = function () {
             var parts = this.getNearParts();
-            return parts.includes("cell") || parts.includes("moderator");
+            return parts.indexOf("cell") !== -1 || parts.indexOf("moderator") !== -1;
         };
         Water.cooling = 60;
         Water.description = "Must be adjacent to at least one Reactor Cell or active moderator block.";
@@ -2035,7 +2032,7 @@ var ReactorCooler;
         }
         Helium.prototype.isActive = function () {
             var parts = this.getNearParts();
-            return parts.filter(function (comp) { return comp === "cooler_redstone"; }).length === 1 && parts.includes("casing");
+            return parts.filter(function (comp) { return comp === "cooler_redstone"; }).length === 1 && parts.indexOf("casing") !== -1;
         };
         Helium.cooling = 140;
         Helium.description = "Must be adjacent to exactly one valid Redstone Cooler and at least one Reactor Casing.";
@@ -2233,7 +2230,7 @@ var ReactorDesign = /** @class */ (function () {
             return "casing";
         }
         var part = this.getPart(x, y, z);
-        if (part && target.includes(part.type) && part.isActive()) {
+        if (part && target.indexOf(part.type) !== -1 && part.isActive()) {
             return part.type;
         }
         return null;
@@ -2797,7 +2794,7 @@ var NuclearFurnace = /** @class */ (function (_super) {
     function NuclearFurnace() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.defaultValues = {
-            energy: 0,
+            energy: 0, //burn
             time: 0,
             progress: 0
         };
@@ -2870,7 +2867,7 @@ var NuclearFurnace = /** @class */ (function (_super) {
         return 0;
     };
     NuclearFurnace.cookTime = 10;
-    NuclearFurnace.FuelData = (_a = {},
+    NuclearFurnace.FuelData = (_a = {}, //burn time
         _a[NCID.block_thorium] = 3200,
         _a[NCID.block_uranium] = 3200,
         _a[NCID.ingot_thorium] = 320,

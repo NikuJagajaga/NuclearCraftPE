@@ -106,7 +106,7 @@ class ReactorModerator extends ReactorPart {
     readonly target = ["cell"];
 
     isActive(): boolean {
-        return this.getNearParts().includes("cell");
+        return this.getNearParts().indexOf("cell") !== -1;
     }
 
 }
@@ -124,7 +124,7 @@ namespace ReactorCooler {
         isActive(): boolean {
             const parts = this.getNearParts();
             for(let i = 0; i < this.target.length; i++){
-                if(!parts.includes(this.target[i])){
+                if(parts.indexOf(this.target[i]) === -1){
                     return false;
                 }
             }
@@ -145,7 +145,7 @@ namespace ReactorCooler {
         static readonly description = "Must be adjacent to at least one Reactor Cell or active moderator block.";
         isActive(): boolean {
             const parts = this.getNearParts();
-            return parts.includes("cell") || parts.includes("moderator");
+            return parts.indexOf("cell") !== -1 || parts.indexOf("moderator") !== -1;
         }
     }
 
@@ -208,7 +208,7 @@ namespace ReactorCooler {
         static readonly description = "Must be adjacent to exactly one valid Redstone Cooler and at least one Reactor Casing.";
         isActive(): boolean {
             const parts = this.getNearParts();
-            return parts.filter(comp => comp === "cooler_redstone").length === 1 && parts.includes("casing");
+            return parts.filter(comp => comp === "cooler_redstone").length === 1 && parts.indexOf("casing") !== -1;
         }
     }
 
@@ -298,8 +298,7 @@ namespace ReactorCooler {
     ReactorPartRegistry.register(NCID.cooler_magnesium, Magnesium);
 
     const coolerNameOverride = (item: ItemInstance, name: string): string => {
-        //@ts-ignore
-        const coolerData: typeof Base = ReactorPartRegistry.get(item.id);
+        const coolerData = ReactorPartRegistry.get(item.id) as typeof Base;
         return name + "\n§bCooling rate: " + coolerData.cooling + "H/t\n" + coolerData.description;
     };
 

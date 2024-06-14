@@ -62,7 +62,7 @@ class ReactorDesign {
             return "casing";
         }
         const part = this.getPart(x, y, z);
-        if(part && target.includes(part.type) && part.isActive()){
+        if(part && target.indexOf(part.type) !== -1 && part.isActive()){
             return part.type;
         }
         return null;

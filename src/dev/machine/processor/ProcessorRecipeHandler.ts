@@ -46,7 +46,7 @@ class ProcessorRecipeHandler {
         }
         if(typeof item.id === "string"){
             pair = IDConverter.getIDData(item.id);
-            return {id: pair.id, count: item.count || 1, data: pair.data || defData, chance: item.chance};
+            return {id: pair.id, count: item.count || 1, data: item.data || pair.data || defData, chance: item.chance};
         }
         return null;
     }
@@ -175,7 +175,7 @@ class ProcessorRecipeHandler {
         if(this.inputTankSize > 0){
             this.recipes.some(recipe => {
                 for(let i = 0; i < this.inputTankSize; i++){
-                    if(!liquids.includes(recipe.inputLiq[i].liquid)){
+                    if(liquids.indexOf(recipe.inputLiq[i].liquid) === -1){
                         liquids.push(recipe.inputLiq[i].liquid);
                     }
                 }
