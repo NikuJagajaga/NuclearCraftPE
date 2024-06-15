@@ -111,12 +111,9 @@ class TileProcessor extends ProcessorBase {
     consumeSources(recipe: ProcessorRecipe): void {
         const inputSlots = this.getInputSlots();
         const inputTanks = this.getInputTanks();
-        let item: ItemInstance;
         let slot: ItemContainerSlot;
-        let liquid: LiquidInstance;
         let tank: BlockEngine.LiquidTank;
-        for(let i = 0; i < recipe.input.length; i++){
-            item = recipe.input[i];
+        for(const item of recipe.input){
             slot = inputSlots.find(s => s.id === item.id && (item.data === -1 || s.data === item.data));
             if(slot){
                 slot.count -= item.count;
@@ -124,8 +121,7 @@ class TileProcessor extends ProcessorBase {
                 slot.validate();
             }
         }
-        for(let i = 0; i < recipe.inputLiq.length; i++){
-            liquid = recipe.inputLiq[i];
+        for(const liquid of recipe.inputLiq){
             tank = inputTanks.find(t => t.getLiquidStored() === liquid.liquid && t.getAmount() >= liquid.amount);
             if(tank){
                 tank.getLiquid(liquid.amount);
@@ -196,13 +192,12 @@ class TileProcessor extends ProcessorBase {
 
         const player = new PlayerEntity(playerUid);
         const inputTanks = this.getInputTanks();
+        const outputTanks = this.getOutputTanks();
         const empty = LiquidItemRegistry.getEmptyItem(item.id, item.data);
-        let tank: BlockEngine.LiquidTank;
-        let stored: string;
+        let stored = "";
 
         if(empty){
-            for(let i = 0; i < inputTanks.length; i++){
-                tank = inputTanks[i];
+            for(const tank of inputTanks){
                 stored = tank.getLiquidStored();
                 if(!tank.isFull() && (stored === empty.liquid || !stored && tank.isValidLiquid(empty.liquid))){
                     if(tank.getLimit() - tank.getAmount(stored) >= empty.amount){
@@ -223,11 +218,9 @@ class TileProcessor extends ProcessorBase {
             }
         }
 
-        const allTanks = [...this.getOutputTanks(), ...inputTanks];
         let full: {id: number, data: number, amount: number, storage?: number};
 
-        for(let i = 0; i < allTanks.length; i++){
-            tank = allTanks[i];
+        for(const tank of [...outputTanks, ...inputTanks]){
             stored = tank.getLiquidStored();
             if(stored){
                 full = LiquidItemRegistry.getFullItem(item.id, item.data, stored);

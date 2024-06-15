@@ -103,7 +103,7 @@ FissionFuel.createLowAndHigh("Cf251", "Cf-251", 58000, 225, 120);
 Callback.addCallback("PreLoaded", () => {
 
     const addFuelRecipes = (symbol: string, fertile: number, ...fissiles: number[]): void => {
-        fissiles.forEach(fissile => {
+        for(const fissile of fissiles){
             NCID["LE" + symbol + fissile] || alert("LE" + symbol + fissile);
             NCID["HE" + symbol + fissile] || alert("HE" + symbol + fissile);
             NCID[symbol + fertile] || alert(symbol + fertile);
@@ -112,7 +112,7 @@ Callback.addCallback("PreLoaded", () => {
             Recipes2.addShapeless(NCID["LE" + symbol + fissile + "ox"], [{id: NCID[symbol + fissile + "ox"], data: 0}, {id: NCID[symbol + fertile + "ox"], count: 8, data: 0}]);
             Recipes2.addShapeless(NCID["HE" + symbol + fissile], [{id: NCID[symbol + fissile], count: 4, data: 0}, {id: NCID[symbol + fertile], count: 5, data: 0}]);
             Recipes2.addShapeless(NCID["HE" + symbol + fissile + "ox"], [{id: NCID[symbol + fissile + "ox"], count: 4, data: 0}, {id: NCID[symbol + fertile + "ox"], count: 5, data: 0}]);
-        });
+        }
     };
 
     Recipes2.addShapeless(NCID.TBU, [{id: NCID.T232, count: 9, data: 0}]);

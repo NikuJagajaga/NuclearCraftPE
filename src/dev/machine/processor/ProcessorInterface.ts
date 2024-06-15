@@ -34,10 +34,9 @@ class ProcessorInterface implements StorageDescriptor {
         if(!this.tileEntity){
             return null;
         }
-        const tanks = this.tileEntity.getInputTanks();
-        for(let i = 0; i < tanks.length; i++){
-            if(!tanks[i].isFull()){
-                return tanks[i];
+        for(const tank of this.tileEntity.getInputTanks()){
+            if(!tank.isFull()){
+                return tank;
             }
         }
         return null;
@@ -47,10 +46,9 @@ class ProcessorInterface implements StorageDescriptor {
         if(!this.tileEntity){
             return null;
         }
-        const tanks = this.tileEntity.getOutputTanks();
-        for(let i = 0; i < tanks.length; i++){
-            if(!tanks[i].isEmpty()){
-                return tanks[i];
+        for(const tank of this.tileEntity.getOutputTanks()){
+            if(!tank.isEmpty()){
+                return tank;
             }
         }
         return null;

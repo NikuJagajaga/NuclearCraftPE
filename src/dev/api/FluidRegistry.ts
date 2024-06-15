@@ -21,7 +21,7 @@ class FluidRegistry {
     }
 
     static register(key: string, name: string, texture?: keyof typeof FluidRegistry.base, colorCode?: string): void {
-        let uiTexture: string;
+        let uiTexture = "";
         if(colorCode && texture in this.base){
             const bmp = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
             const cvs = new Canvas(bmp);

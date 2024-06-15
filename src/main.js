@@ -73,21 +73,6 @@ var getLiquidByTex = function (texture) {
 Network.addClientPacket("nc.clientTipMessage", function (data) {
     Game.tipMessage(data.msg);
 });
-/*
-const LiquidItemRegistry_isEmptyItem = (id: number, data: number): boolean => {
-    for(let key in LiquidItemRegistry.FullByEmpty){
-        if(key.startsWith(id + ":")){
-            return true;
-        }
-    }
-    for(let key in LiquidRegistry.FullByEmpty){
-        if(key.startsWith(id + ":" + data + ":") || key.startsWith(id + ":-1:")){
-            return true;
-        }
-    }
-    return false;
-}
-*/
 __config__.checkAndRestore({
     SlotsLikeVanilla: false,
     ore_copper: { enabled: true, rate: 5, size: 6, minY: 0, maxY: 48 },
@@ -161,7 +146,7 @@ var NCConfig;
 })(NCConfig || (NCConfig = {}));
 ;
 var NCID = {};
-var NCItem = /** @class */ (function () {
+var NCItem = (function () {
     function NCItem() {
     }
     NCItem.createBlock = function (key, name, val1, val2) {
@@ -206,30 +191,11 @@ var NCItem = /** @class */ (function () {
         var id = IDRegistry.genItemID(globalKey || prekey);
         Item.createItem(globalKey || prekey, name, { name: prekey });
         Item.setCategory(id, ItemCategory.ITEMS);
-        //ItemRegistry.createItem(globalKey || prekey, {name: name, icon: prekey});
         NCID[key] = id;
         return id;
     };
     NCItem.PREFIX = "nc_";
-    /*
-        static BlockInstance = class extends BlockBase {
-    
-            readonly prefix_stringID: string;
-    
-            constructor(key: string, globalKey?: string){
-                const prekey = NCItem.PREFIX + key;
-                super(globalKey || prekey);
-                this.prefix_stringID = prekey;
-                NCID[key] = this.id;
-            }
-    
-            addVariation(name: string, texture: ([string, number] | number)[], inCreative?: boolean): void {
-                super.addVariation(name, texture.map(tex => typeof tex === "number" ? [this.prefix_stringID, tex] : tex), inCreative);
-            }
-    
-        }
-    */
-    NCItem.ItemInstance = /** @class */ (function (_super) {
+    NCItem.ItemInstance = (function (_super) {
         __extends(class_1, _super);
         function class_1(key, name, globalKey) {
             var _this = this;
@@ -242,7 +208,7 @@ var NCItem = /** @class */ (function () {
     }(ItemCommon));
     return NCItem;
 }());
-var MachineRegistry = /** @class */ (function () {
+var MachineRegistry = (function () {
     function MachineRegistry() {
     }
     MachineRegistry.registerPrototype = function (id, prototype) {
@@ -273,7 +239,7 @@ var MachineRegistry = /** @class */ (function () {
     };
     return MachineRegistry;
 }());
-var NCWindowMaker = /** @class */ (function (_super) {
+var NCWindowMaker = (function (_super) {
     __extends(NCWindowMaker, _super);
     function NCWindowMaker(title, width, height, frame) {
         var _this = _super.call(this, title, width, height, frame) || this;
@@ -313,7 +279,7 @@ var NCWindowMaker = /** @class */ (function (_super) {
     };
     return NCWindowMaker;
 }(WindowMaker));
-var FluidRegistry = /** @class */ (function () {
+var FluidRegistry = (function () {
     function FluidRegistry() {
     }
     FluidRegistry.genCellTex = function (key, liq) {
@@ -326,7 +292,7 @@ var FluidRegistry = /** @class */ (function () {
         FileTools.WriteImage(__dir__ + "res/items-opaque/cell/nc_cell_".concat(key, ".png"), bmp);
     };
     FluidRegistry.register = function (key, name, texture, colorCode) {
-        var uiTexture;
+        var uiTexture = "";
         if (colorCode && texture in this.base) {
             var bmp = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
             var cvs = new Canvas(bmp);
@@ -336,11 +302,9 @@ var FluidRegistry = /** @class */ (function () {
             cvs.drawBitmap(this.base[texture], 0, 0, paint);
             uiTexture = "nc.fluid." + key;
             UI.TextureSource.put(uiTexture, bmp);
-            //this.genCellTex(key, bmp);
         }
         else {
             uiTexture = "nc.fluid." + key;
-            //this.genCellTex(key, UI.TextureSource.get(uiTexture));
         }
         LiquidRegistry.registerLiquid(key, name, [uiTexture]);
         Item.addCreativeGroup("nc_cell", "NC Cell", [ItemRegistry.registerItem(new ItemFluidCell("cell_" + key, key)).id]);
@@ -361,7 +325,7 @@ var FluidRegistry = /** @class */ (function () {
     FluidRegistry.cell_front = FileTools.ReadImage(__dir__ + "tex_base/cell/front.png");
     return FluidRegistry;
 }());
-var MachineBase = /** @class */ (function (_super) {
+var MachineBase = (function (_super) {
     __extends(MachineBase, _super);
     function MachineBase() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -422,7 +386,7 @@ var MachineBase = /** @class */ (function (_super) {
     ], MachineBase.prototype, "renderModel", null);
     return MachineBase;
 }(TileEntityBase));
-var GeneratorBase = /** @class */ (function (_super) {
+var GeneratorBase = (function (_super) {
     __extends(GeneratorBase, _super);
     function GeneratorBase() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -438,7 +402,7 @@ var GeneratorBase = /** @class */ (function (_super) {
     };
     return GeneratorBase;
 }(MachineBase));
-var ProcessorBase = /** @class */ (function (_super) {
+var ProcessorBase = (function (_super) {
     __extends(ProcessorBase, _super);
     function ProcessorBase() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -456,7 +420,7 @@ var ProcessorBase = /** @class */ (function (_super) {
     };
     return ProcessorBase;
 }(MachineBase));
-var TileProcessor = /** @class */ (function (_super) {
+var TileProcessor = (function (_super) {
     __extends(TileProcessor, _super);
     function TileProcessor(inputSlotSize, inputTankSize, outputSlotSize, outputTankSize, particle1, particle2, processTime, processPower) {
         var _this = _super.call(this) || this;
@@ -552,25 +516,29 @@ var TileProcessor = /** @class */ (function (_super) {
     TileProcessor.prototype.consumeSources = function (recipe) {
         var inputSlots = this.getInputSlots();
         var inputTanks = this.getInputTanks();
-        var item;
         var slot;
-        var liquid;
         var tank;
-        for (var i = 0; i < recipe.input.length; i++) {
-            item = recipe.input[i];
+        var _loop_1 = function (item) {
             slot = inputSlots.find(function (s) { return s.id === item.id && (item.data === -1 || s.data === item.data); });
             if (slot) {
                 slot.count -= item.count;
                 slot.markDirty();
                 slot.validate();
             }
+        };
+        for (var _i = 0, _a = recipe.input; _i < _a.length; _i++) {
+            var item = _a[_i];
+            _loop_1(item);
         }
-        for (var i = 0; i < recipe.inputLiq.length; i++) {
-            liquid = recipe.inputLiq[i];
+        var _loop_2 = function (liquid) {
             tank = inputTanks.find(function (t) { return t.getLiquidStored() === liquid.liquid && t.getAmount() >= liquid.amount; });
             if (tank) {
                 tank.getLiquid(liquid.amount);
             }
+        };
+        for (var _b = 0, _c = recipe.inputLiq; _b < _c.length; _b++) {
+            var liquid = _c[_b];
+            _loop_2(liquid);
         }
     };
     TileProcessor.prototype.hasSpace = function (recipe) {
@@ -632,12 +600,12 @@ var TileProcessor = /** @class */ (function (_super) {
     TileProcessor.prototype.onItemUse = function (coords, item, playerUid) {
         var player = new PlayerEntity(playerUid);
         var inputTanks = this.getInputTanks();
+        var outputTanks = this.getOutputTanks();
         var empty = LiquidItemRegistry.getEmptyItem(item.id, item.data);
-        var tank;
-        var stored;
+        var stored = "";
         if (empty) {
-            for (var i = 0; i < inputTanks.length; i++) {
-                tank = inputTanks[i];
+            for (var _i = 0, inputTanks_1 = inputTanks; _i < inputTanks_1.length; _i++) {
+                var tank = inputTanks_1[_i];
                 stored = tank.getLiquidStored();
                 if (!tank.isFull() && (stored === empty.liquid || !stored && tank.isValidLiquid(empty.liquid))) {
                     if (tank.getLimit() - tank.getAmount(stored) >= empty.amount) {
@@ -657,10 +625,9 @@ var TileProcessor = /** @class */ (function (_super) {
                 }
             }
         }
-        var allTanks = __spreadArray(__spreadArray([], this.getOutputTanks(), true), inputTanks, true);
         var full;
-        for (var i = 0; i < allTanks.length; i++) {
-            tank = allTanks[i];
+        for (var _a = 0, _b = __spreadArray(__spreadArray([], outputTanks, true), inputTanks, true); _a < _b.length; _a++) {
+            var tank = _b[_a];
             stored = tank.getLiquidStored();
             if (stored) {
                 full = LiquidItemRegistry.getFullItem(item.id, item.data, stored);
@@ -752,39 +719,22 @@ var TileProcessor = /** @class */ (function (_super) {
     ], TileProcessor.prototype, "spawnParticle", null);
     return TileProcessor;
 }(ProcessorBase));
-var ProcessorWindowMaker = /** @class */ (function (_super) {
+var ProcessorWindowMaker = (function (_super) {
     __extends(ProcessorWindowMaker, _super);
     function ProcessorWindowMaker(title) {
         var _this = this;
         var width = 176;
         var height = 86;
         _this = _super.call(this, title, width, height) || this;
-        //energy scale
         _this.addDrawing("", { type: "frame", x: 7, y: 5, width: 18, height: 76, bitmap: "nc.frame" });
         _this.addElements("scaleEnergy", { type: "scale", x: 8, y: 6, bitmap: "nc.energy", direction: WindowMaker.SCALE_UP });
-        /*
-                this.setTooltipFunc("scaleEnergy", (elem: UI.Element) => {
-        
-                    const tile = elem.window.getContainer().getParent().getParent();
-        
-                    const arr = [];
-                    for(let key in tile)arr.push(key);
-                    Game.message(arr.join(", "));
-        
-                    return (tile.getEnergyStorage() + " RF");
-                    //return `${tile.data.energy} / ${tile.getEnergyStorage()} RF`;
-        
-                });
-        */
-        //upgrade slot
         _this.addSlot("slotUpgSpeed", 131, 63, 18, "nc.slot_upg_speed");
         _this.addSlot("slotUpgEnergy", 151, 63, 18, "nc.slot_upg_energy");
         return _this;
-        //this.addElements("buttonRedstone", {type: "button", x: 27, y: 63, bitmap: "nc.button_rs_off", scale: 0.5});
     }
     return ProcessorWindowMaker;
 }(NCWindowMaker));
-var ProcessorInterface = /** @class */ (function () {
+var ProcessorInterface = (function () {
     function ProcessorInterface(inputSlotSize, inputTankSize, outputSlotSize, outputTankSize) {
         this.liquidUnitRatio = 0.001;
         this.inputSlotSize = inputSlotSize;
@@ -792,7 +742,7 @@ var ProcessorInterface = /** @class */ (function () {
         this.outputSlotSize = outputSlotSize;
         this.outputTankSize = outputTankSize;
         this.slots = {};
-        var _loop_1 = function (i) {
+        var _loop_3 = function (i) {
             this_1.slots["input" + i] = {
                 input: true,
                 isValid: function (item, side, tileEntity) {
@@ -803,7 +753,7 @@ var ProcessorInterface = /** @class */ (function () {
         };
         var this_1 = this;
         for (var i = 0; i < this.inputSlotSize; i++) {
-            _loop_1(i);
+            _loop_3(i);
         }
         for (var i = 0; i < this.outputSlotSize; i++) {
             this.slots["output" + i] = { output: true };
@@ -813,10 +763,10 @@ var ProcessorInterface = /** @class */ (function () {
         if (!this.tileEntity) {
             return null;
         }
-        var tanks = this.tileEntity.getInputTanks();
-        for (var i = 0; i < tanks.length; i++) {
-            if (!tanks[i].isFull()) {
-                return tanks[i];
+        for (var _i = 0, _a = this.tileEntity.getInputTanks(); _i < _a.length; _i++) {
+            var tank = _a[_i];
+            if (!tank.isFull()) {
+                return tank;
             }
         }
         return null;
@@ -825,10 +775,10 @@ var ProcessorInterface = /** @class */ (function () {
         if (!this.tileEntity) {
             return null;
         }
-        var tanks = this.tileEntity.getOutputTanks();
-        for (var i = 0; i < tanks.length; i++) {
-            if (!tanks[i].isEmpty()) {
-                return tanks[i];
+        for (var _i = 0, _a = this.tileEntity.getOutputTanks(); _i < _a.length; _i++) {
+            var tank = _a[_i];
+            if (!tank.isEmpty()) {
+                return tank;
             }
         }
         return null;
@@ -852,7 +802,7 @@ var ProcessorInterface = /** @class */ (function () {
     };
     return ProcessorInterface;
 }());
-var ProcessorRecipeHandler = /** @class */ (function () {
+var ProcessorRecipeHandler = (function () {
     function ProcessorRecipeHandler(inputSlotSize, inputTankSize, outputSlotSize, outputTankSize) {
         var _this = this;
         this.recipes = [];
@@ -1036,7 +986,7 @@ var ProcessorRecipeHandler = /** @class */ (function () {
     };
     return ProcessorRecipeHandler;
 }());
-var ProcessorRegistry = /** @class */ (function () {
+var ProcessorRegistry = (function () {
     function ProcessorRegistry() {
     }
     ProcessorRegistry.createBlock = function (key, name) {
@@ -1073,7 +1023,7 @@ var ProcessorRegistry = /** @class */ (function () {
     ProcessorRegistry.recipes = {};
     return ProcessorRegistry;
 }());
-var FissionMaterial = /** @class */ (function () {
+var FissionMaterial = (function () {
     function FissionMaterial() {
     }
     FissionMaterial.create = function (key, name) {
@@ -1094,11 +1044,12 @@ var FissionMaterial = /** @class */ (function () {
         for (var _i = 2; _i < arguments.length; _i++) {
             nums[_i - 2] = arguments[_i];
         }
-        for (var i = 0; i < nums.length; i++) {
-            this.createWithOxide(symbol + nums[i], name + "-" + nums[i]);
+        for (var _a = 0, nums_1 = nums; _a < nums_1.length; _a++) {
+            var num = nums_1[_a];
+            this.createWithOxide(symbol + num, name + "-" + num);
         }
     };
-    FissionMaterial.Instance = /** @class */ (function (_super) {
+    FissionMaterial.Instance = (function (_super) {
         __extends(class_2, _super);
         function class_2(key, name) {
             return _super.call(this, key, name) || this;
@@ -1125,7 +1076,7 @@ FissionMaterial.create("boron10", "Boron-10");
 FissionMaterial.create("boron11", "Boron-11");
 FissionMaterial.create("lithium6", "Lithium-6");
 FissionMaterial.create("lithium7", "Lithium-7");
-var FissionFuel = /** @class */ (function () {
+var FissionFuel = (function () {
     function FissionFuel() {
     }
     FissionFuel.create = function (key, name, time, power, heat) {
@@ -1172,7 +1123,7 @@ var FissionFuel = /** @class */ (function () {
         return list;
     };
     FissionFuel.data = {};
-    FissionFuel.Instance = /** @class */ (function (_super) {
+    FissionFuel.Instance = (function (_super) {
         __extends(class_3, _super);
         function class_3(key, name) {
             return _super.call(this, key, name) || this;
@@ -1215,7 +1166,8 @@ Callback.addCallback("PreLoaded", function () {
         for (var _i = 2; _i < arguments.length; _i++) {
             fissiles[_i - 2] = arguments[_i];
         }
-        fissiles.forEach(function (fissile) {
+        for (var _a = 0, fissiles_1 = fissiles; _a < fissiles_1.length; _a++) {
+            var fissile = fissiles_1[_a];
             NCID["LE" + symbol + fissile] || alert("LE" + symbol + fissile);
             NCID["HE" + symbol + fissile] || alert("HE" + symbol + fissile);
             NCID[symbol + fertile] || alert(symbol + fertile);
@@ -1224,7 +1176,7 @@ Callback.addCallback("PreLoaded", function () {
             Recipes2.addShapeless(NCID["LE" + symbol + fissile + "ox"], [{ id: NCID[symbol + fissile + "ox"], data: 0 }, { id: NCID[symbol + fertile + "ox"], count: 8, data: 0 }]);
             Recipes2.addShapeless(NCID["HE" + symbol + fissile], [{ id: NCID[symbol + fissile], count: 4, data: 0 }, { id: NCID[symbol + fertile], count: 5, data: 0 }]);
             Recipes2.addShapeless(NCID["HE" + symbol + fissile + "ox"], [{ id: NCID[symbol + fissile + "ox"], count: 4, data: 0 }, { id: NCID[symbol + fertile + "ox"], count: 5, data: 0 }]);
-        });
+        }
     };
     Recipes2.addShapeless(NCID.TBU, [{ id: NCID.T232, count: 9, data: 0 }]);
     Recipes2.addShapeless(NCID.TBUox, [{ id: NCID.T232ox, count: 9, data: 0 }]);
@@ -1297,7 +1249,7 @@ Item.addCreativeGroup("ingot", Translation.translate("Ingots"), [
     NCItem.createItem("alloy_hsla_steel", "HSLA Steel Alloy"),
     NCItem.createItem("alloy_enderium", "Enderium Ingot", "ingotEnderium")
 ]);
-var ItemDustWithTiny = /** @class */ (function (_super) {
+var ItemDustWithTiny = (function (_super) {
     __extends(ItemDustWithTiny, _super);
     function ItemDustWithTiny() {
         return _super !== null && _super.apply(this, arguments) || this;
@@ -1677,7 +1629,6 @@ Block.setDestroyLevel(NCID.ore_uranium, 3);
 Block.setDestroyLevel(NCID.ore_boron, 3);
 Block.setDestroyLevel(NCID.ore_lithium, 3);
 Block.setDestroyLevel(NCID.ore_magnesium, 3);
-//ToolLib.addBlockDropOnExplosion(namedID);
 var genetateOre = function (chunkX, chunkZ, random, id, prop) {
     if (prop.enabled) {
         for (var i = 0; i < prop.rate; i++) {
@@ -1695,7 +1646,7 @@ Callback.addCallback("GenerateChunk", function (chunkX, chunkZ, random) {
     genetateOre(chunkX, chunkZ, random, NCID.ore_lithium, NCConfig.ore_lithium);
     genetateOre(chunkX, chunkZ, random, NCID.ore_magnesium, NCConfig.ore_magnesium);
 });
-var ItemFluidCell = /** @class */ (function (_super) {
+var ItemFluidCell = (function (_super) {
     __extends(ItemFluidCell, _super);
     function ItemFluidCell(stringID, liquid) {
         var _this = _super.call(this, stringID, LiquidRegistry.getLiquidName(liquid) + " Cell") || this;
@@ -1707,9 +1658,6 @@ var ItemFluidCell = /** @class */ (function (_super) {
     };
     return ItemFluidCell;
 }(NCItem.ItemInstance));
-//FluidRegistry.genCellTex("water", LiquidRegistry.getLiquidUIBitmap("water", 16, 16));
-//FluidRegistry.genCellTex("lava", LiquidRegistry.getLiquidUIBitmap("lava", 16, 16));
-//FluidRegistry.genCellTex("milk", LiquidRegistry.getLiquidUIBitmap("milk", 16, 16));
 Item.addCreativeGroup("nc_cell", "NC Cell", [
     NCItem.createItem("cell_empty", "Empty Cell"),
     ItemRegistry.registerItem(new ItemFluidCell("cell_water", "water")).id,
@@ -1746,12 +1694,8 @@ FluidRegistry.register("molten_sulfur", "Molten Sulfur", "MOLTEN", "#DEDE7A");
 FluidRegistry.register("molten_arsenic", "Molten Arsenic", "MOLTEN", "#818475");
 FluidRegistry.register("liquid_helium", "Liquid Helium");
 FluidRegistry.register("liquid_nitrogen", "Liquid Nitrogen", "LIQUID", "#31C23A");
-//plasma
-//neutron
 FluidRegistry.register("ethanol", "Ethanol", "LIQUID", "#655140");
 FluidRegistry.register("methanol", "Methanol", "LIQUID", "#71524C");
-//radaway
-//radaway_slow
 FluidRegistry.register("nitrogen", "Nitrogen", "GAS", "#7CC37B");
 FluidRegistry.register("fluorine", "Fluorine", "GAS", "#D3C75D");
 FluidRegistry.register("carbon_dioxide", "Carbon Dioxide", "GAS", "#5C635A");
@@ -1790,7 +1734,7 @@ FluidRegistry.register("molten_alumina", "Molten Alumina", "MOLTEN", "#919880");
 FluidRegistry.register("molten_aluminum", "Molten Aluminum", "MOLTEN", "#B5ECD5");
 FluidRegistry.register("molten_silver", "Molten Silver", "MOLTEN", "#E2DAF6");
 FluidRegistry.register("molten_ender", "Resonant Ender");
-var ReactorPartRegistry = /** @class */ (function () {
+var ReactorPartRegistry = (function () {
     function ReactorPartRegistry() {
     }
     ReactorPartRegistry.register = function (id, reactorPart) {
@@ -1802,7 +1746,7 @@ var ReactorPartRegistry = /** @class */ (function () {
     ReactorPartRegistry.data = {};
     return ReactorPartRegistry;
 }());
-var ReactorPart = /** @class */ (function () {
+var ReactorPart = (function () {
     function ReactorPart(parent, x, y, z) {
         this.parent = parent;
         this.x = x;
@@ -1833,7 +1777,7 @@ var ReactorPart = /** @class */ (function () {
     };
     return ReactorPart;
 }());
-var ReactorCell = /** @class */ (function (_super) {
+var ReactorCell = (function (_super) {
     __extends(ReactorCell, _super);
     function ReactorCell() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1879,7 +1823,7 @@ var ReactorCell = /** @class */ (function (_super) {
     };
     return ReactorCell;
 }(ReactorPart));
-var ReactorModerator = /** @class */ (function (_super) {
+var ReactorModerator = (function (_super) {
     __extends(ReactorModerator, _super);
     function ReactorModerator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1894,7 +1838,7 @@ var ReactorModerator = /** @class */ (function (_super) {
 }(ReactorPart));
 var ReactorCooler;
 (function (ReactorCooler) {
-    var Base = /** @class */ (function (_super) {
+    var Base = (function (_super) {
         __extends(Base, _super);
         function Base() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1916,7 +1860,7 @@ var ReactorCooler;
         return Base;
     }(ReactorPart));
     ReactorCooler.Base = Base;
-    var Water = /** @class */ (function (_super) {
+    var Water = (function (_super) {
         __extends(Water, _super);
         function Water() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1934,7 +1878,7 @@ var ReactorCooler;
         return Water;
     }(Base));
     ReactorCooler.Water = Water;
-    var Redstone = /** @class */ (function (_super) {
+    var Redstone = (function (_super) {
         __extends(Redstone, _super);
         function Redstone() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1948,7 +1892,7 @@ var ReactorCooler;
         return Redstone;
     }(Base));
     ReactorCooler.Redstone = Redstone;
-    var Quartz = /** @class */ (function (_super) {
+    var Quartz = (function (_super) {
         __extends(Quartz, _super);
         function Quartz() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1962,7 +1906,7 @@ var ReactorCooler;
         return Quartz;
     }(Base));
     ReactorCooler.Quartz = Quartz;
-    var Gold = /** @class */ (function (_super) {
+    var Gold = (function (_super) {
         __extends(Gold, _super);
         function Gold() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1976,7 +1920,7 @@ var ReactorCooler;
         return Gold;
     }(Base));
     ReactorCooler.Gold = Gold;
-    var Glowstone = /** @class */ (function (_super) {
+    var Glowstone = (function (_super) {
         __extends(Glowstone, _super);
         function Glowstone() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -1993,7 +1937,7 @@ var ReactorCooler;
         return Glowstone;
     }(Base));
     ReactorCooler.Glowstone = Glowstone;
-    var Lapis = /** @class */ (function (_super) {
+    var Lapis = (function (_super) {
         __extends(Lapis, _super);
         function Lapis() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2007,7 +1951,7 @@ var ReactorCooler;
         return Lapis;
     }(Base));
     ReactorCooler.Lapis = Lapis;
-    var Diamond = /** @class */ (function (_super) {
+    var Diamond = (function (_super) {
         __extends(Diamond, _super);
         function Diamond() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2021,7 +1965,7 @@ var ReactorCooler;
         return Diamond;
     }(Base));
     ReactorCooler.Diamond = Diamond;
-    var Helium = /** @class */ (function (_super) {
+    var Helium = (function (_super) {
         __extends(Helium, _super);
         function Helium() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2039,7 +1983,7 @@ var ReactorCooler;
         return Helium;
     }(Base));
     ReactorCooler.Helium = Helium;
-    var Enderium = /** @class */ (function (_super) {
+    var Enderium = (function (_super) {
         __extends(Enderium, _super);
         function Enderium() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2056,7 +2000,7 @@ var ReactorCooler;
         return Enderium;
     }(Base));
     ReactorCooler.Enderium = Enderium;
-    var Cryotheum = /** @class */ (function (_super) {
+    var Cryotheum = (function (_super) {
         __extends(Cryotheum, _super);
         function Cryotheum() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2073,7 +2017,7 @@ var ReactorCooler;
         return Cryotheum;
     }(Base));
     ReactorCooler.Cryotheum = Cryotheum;
-    var Iron = /** @class */ (function (_super) {
+    var Iron = (function (_super) {
         __extends(Iron, _super);
         function Iron() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2087,7 +2031,7 @@ var ReactorCooler;
         return Iron;
     }(Base));
     ReactorCooler.Iron = Iron;
-    var Emerald = /** @class */ (function (_super) {
+    var Emerald = (function (_super) {
         __extends(Emerald, _super);
         function Emerald() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2101,7 +2045,7 @@ var ReactorCooler;
         return Emerald;
     }(Base));
     ReactorCooler.Emerald = Emerald;
-    var Copper = /** @class */ (function (_super) {
+    var Copper = (function (_super) {
         __extends(Copper, _super);
         function Copper() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2115,7 +2059,7 @@ var ReactorCooler;
         return Copper;
     }(Base));
     ReactorCooler.Copper = Copper;
-    var Tin = /** @class */ (function (_super) {
+    var Tin = (function (_super) {
         __extends(Tin, _super);
         function Tin() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2133,7 +2077,7 @@ var ReactorCooler;
         return Tin;
     }(Base));
     ReactorCooler.Tin = Tin;
-    var Magnesium = /** @class */ (function (_super) {
+    var Magnesium = (function (_super) {
         __extends(Magnesium, _super);
         function Magnesium() {
             var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2166,7 +2110,6 @@ var ReactorCooler;
     ReactorPartRegistry.register(NCID.cooler_tin, Tin);
     ReactorPartRegistry.register(NCID.cooler_magnesium, Magnesium);
     var coolerNameOverride = function (item, name) {
-        //@ts-ignore
         var coolerData = ReactorPartRegistry.get(item.id);
         return name + "\n§bCooling rate: " + coolerData.cooling + "H/t\n" + coolerData.description;
     };
@@ -2186,7 +2129,7 @@ var ReactorCooler;
     Item.registerNameOverrideFunction(NCID.cooler_tin, coolerNameOverride);
     Item.registerNameOverrideFunction(NCID.cooler_magnesium, coolerNameOverride);
 })(ReactorCooler || (ReactorCooler = {}));
-var ReactorDesign = /** @class */ (function () {
+var ReactorDesign = (function () {
     function ReactorDesign(region, from, to) {
         this.sizeX = to.x - from.x - 1;
         this.sizeY = to.y - from.y - 1;
@@ -2290,7 +2233,7 @@ var NCWindow;
         .addElements("textStatus", { type: "text", x: 168, y: 80, multiline: true, font: __assign(__assign({}, font), { align: UI.Font.ALIGN_END }) });
     NCWindow.FissionController = winMaker.makeWindow();
 })(NCWindow || (NCWindow = {}));
-var TileFissionController = /** @class */ (function (_super) {
+var TileFissionController = (function (_super) {
     __extends(TileFissionController, _super);
     function TileFissionController() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -2569,7 +2512,7 @@ Callback.addCallback("PreLoaded", function () {
 });
 var _a;
 NCItem.createBlock("decay_generator", "Decay Generator");
-var DecayGenerator = /** @class */ (function (_super) {
+var DecayGenerator = (function (_super) {
     __extends(DecayGenerator, _super);
     function DecayGenerator() {
         return _super.call(this) || this;
@@ -2623,34 +2566,13 @@ Callback.addCallback("PreLoaded", function () {
         c: "redstone"
     });
 });
-/*
-const testData: {[key: string]: number} = {};
-const testArray: number[] = [];
-Block.setRandomTickCallback(NCID.block_lead, (x: number, y: number, z: number, id: number, data: number, region: BlockSource) => {
-    const key = x + ":" + y + ":" + z;
-    const time = Debug.sysTime() / 1000 | 0;
-    if(key in testData){
-        testArray.push(time - testData[key]);
-        const len = testArray.length;
-        if(len === 0){
-            return;
-        }
-        let sum = 0;
-        for(let i = 0; i < len; i++){
-            sum += testArray[i];
-        }
-        Game.message("min: " + Math.min(...testArray) + "s max: " + Math.max(...testArray) + "s avg: " + (sum / len | 0) + "s (" + len + ")");
-    }
-    testData[key] = time;
-});
-*/ 
 Item.addCreativeGroup("nc_rtg", "RTG", [
     NCItem.createBlock("rtg_uranium", "Uranium RTG", [0, 0, 1]),
     NCItem.createBlock("rtg_plutonium", "Plutonium RTG", [0, 0, 1]),
     NCItem.createBlock("rtg_americium", "Americium RTG", [0, 0, 1]),
     NCItem.createBlock("rtg_californium", "Californium RTG", [0, 0, 1])
 ]);
-var RTGenerator = /** @class */ (function (_super) {
+var RTGenerator = (function (_super) {
     __extends(RTGenerator, _super);
     function RTGenerator(produce) {
         var _this = _super.call(this) || this;
@@ -2703,7 +2625,7 @@ Item.addCreativeGroup("nc_solar", "Solar Panel", [
     NCItem.createBlock("solar_du", "DU Solar Panel", [1, 0, 1]),
     NCItem.createBlock("solar_elite", "Elite Solar Panel", [1, 0, 1])
 ]);
-var SolarPanel = /** @class */ (function (_super) {
+var SolarPanel = (function (_super) {
     __extends(SolarPanel, _super);
     function SolarPanel(produce) {
         var _this = _super.call(this) || this;
@@ -2789,12 +2711,12 @@ var NCWindow;
     });
     NCWindow.Furnace = winMaker.makeWindow();
 })(NCWindow || (NCWindow = {}));
-var NuclearFurnace = /** @class */ (function (_super) {
+var NuclearFurnace = (function (_super) {
     __extends(NuclearFurnace, _super);
     function NuclearFurnace() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.defaultValues = {
-            energy: 0, //burn
+            energy: 0,
             time: 0,
             progress: 0
         };
@@ -2867,7 +2789,7 @@ var NuclearFurnace = /** @class */ (function (_super) {
         return 0;
     };
     NuclearFurnace.cookTime = 10;
-    NuclearFurnace.FuelData = (_a = {}, //burn time
+    NuclearFurnace.FuelData = (_a = {},
         _a[NCID.block_thorium] = 3200,
         _a[NCID.block_uranium] = 3200,
         _a[NCID.ingot_thorium] = 320,
@@ -3289,8 +3211,8 @@ Callback.addCallback("PreLoaded", function () {
     addCombineRecipe([NCID.dust_lithium, NCID.ingot_lithium], 1, [NCID.dust_manganese_dioxide, NCID.ingot_manganese_dioxide], 1, { id: NCID.alloy_LiMnO2, count: 2 }, 1.5, 1);
     addCombineRecipe([NCID.dust_copper, NCID.ingot_copper], 3, [NCID.dust_silver, NCID.ingot_silver], 1, { id: NCID.alloy_shibuichi, count: 4 }, 1.5, 0.5);
     addCombineRecipe([NCID.dust_tin, NCID.ingot_tin], 3, [NCID.dust_silver, NCID.ingot_silver], 1, { id: NCID.alloy_tin_silver, count: 4 }, 1.5, 0.5);
-    /**/ handler.add({ id: NCID.ingot_lead, count: 3 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
-    /**/ handler.add({ id: NCID.dust_lead, count: 3, data: 0 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
+    handler.add({ id: NCID.ingot_lead, count: 3 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
+    handler.add({ id: NCID.dust_lead, count: 3, data: 0 }, "gold_ingot", { id: NCID.alloy_lead_platinum, count: 4 }, 1.5, 0.5);
     handler.add(NCID.alloy_tough, NCID.alloy_hard_carbon, NCID.alloy_extreme, 2, 2);
     handler.add(NCID.alloy_extreme, NCID.gem_boron_arsenide, { id: NCID.alloy_thermal, count: 2 }, 1.5, 1.5);
     addCombineRecipe([NCID.dust_zirconium, NCID.ingot_zirconium], 7, [NCID.dust_tin, NCID.ingot_tin], 1, { id: NCID.alloy_zircaloy, count: 8 }, 4, 1);
@@ -3304,8 +3226,6 @@ Callback.addCallback("PreLoaded", function () {
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.chemical_reactor);
-    //handler.add({liquid: "water", amount: 1000}, {liquid: "lava", amount: 0}, {liquid: "oxygen", amount: 500}, {liquid: "hydrogen", amount: 500}, 0.1, 1);
-    //handler.add(["oxygen:500"], ["hydrogen:1000"], ["lava:2000"], null, 1, 1);
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.crystallizer);
@@ -3358,7 +3278,6 @@ Callback.addCallback("PreLoaded", function () {
     handler.add(["molten_NaOH:666"], ["molten_sodium:144"], ["water:1000"], ["oxygen:500"], null, 1.5, 1.5);
     handler.add(["molten_KOH:666"], ["molten_potassium:144"], ["water:1000"], ["oxygen:500"], null, 1.5, 1.5);
     handler.add(["molten_alumina:144"], ["molten_aluminum:288"], ["oxygen:3000"], null, null, 2.0, 1.0);
-    //Fluoride Recipes
 });
 Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.fluid_enricher);
@@ -3376,7 +3295,6 @@ Callback.addCallback("PreLoaded", function () {
     handler.add(NCID.dust_manganese_oxide, ["oxygen:1000"], NCID.dust_manganese_dioxide);
     handler.add(NCID.cooler_empty, ["water:1000"], NCID.cooler_water);
     handler.add(NCID.cooler_empty, ["liquid_helium:1000"], NCID.cooler_helium);
-    //cooler_cryotheum
     handler.add(NCID.empty_frame, ["water:2000"], NCID.passive_water);
     handler.add(NCID.passive_water, ["lava:1000"], NCID.passive_cobblestone);
     handler.add("sandstone", ["molten_ender:250"], "end_stone");
@@ -3515,9 +3433,7 @@ Callback.addCallback("PreLoaded", function () {
     var handler = ProcessorRegistry.getRecipeHandler(NCID.manufactory);
     handler.add({ id: "coal", data: 0 }, NCID.dust_coal, 0.5, 1);
     handler.add(NCID.dust_coal, NCID.dust_graphite, 0.25, 0.5);
-    //handler.add("charcoal", dustCharcoal, 0.5, 0.5);
     handler.add("diamond", NCID.dust_diamond, 1.5, 1.5);
-    //handler.add("lapis_lazuli", NCID.dust_lapis);
     handler.add(NCID.gem_rhodochrosite, NCID.dust_rhodochrosite, 1.5, 1.5);
     handler.add("quartz", NCID.dust_quartz);
     handler.add("prismarine_shard", "prismarine_crystals");
@@ -3615,7 +3531,7 @@ var TransferMode = {
     OUT: 1,
     NONE: 2
 };
-var TileBattery = /** @class */ (function (_super) {
+var TileBattery = (function (_super) {
     __extends(TileBattery, _super);
     function TileBattery(capacity) {
         var _this = _super.call(this) || this;
@@ -3808,7 +3724,7 @@ Callback.addCallback("PreLoaded", function () {
         d: NCID.wire_MnO2
     });
 });
-var TileItemGenerator = /** @class */ (function (_super) {
+var TileItemGenerator = (function (_super) {
     __extends(TileItemGenerator, _super);
     function TileItemGenerator(item, countPerSec) {
         var _this = _super.call(this) || this;
@@ -3833,7 +3749,7 @@ var TileItemGenerator = /** @class */ (function (_super) {
     };
     return TileItemGenerator;
 }(TileEntityBase));
-var TileFluidGenerator = /** @class */ (function (_super) {
+var TileFluidGenerator = (function (_super) {
     __extends(TileFluidGenerator, _super);
     function TileFluidGenerator(fluid, mbPerSec) {
         var _this = _super.call(this) || this;
@@ -3986,7 +3902,7 @@ var RV;
 ModAPI.addAPICallback("RecipeViewer", function (api) {
     RV = api;
     var RecipeType = api.RecipeType;
-    var ProcessorRecipeType = /** @class */ (function (_super) {
+    var ProcessorRecipeType = (function (_super) {
         __extends(ProcessorRecipeType, _super);
         function ProcessorRecipeType(name, blockID, winMaker) {
             var _this = this;
@@ -4044,7 +3960,7 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
     register("fluid_extractor", "Fluid Extractor", NCWindow.FluidExtractor);
     register("centrifuge", "Centrifuge", NCWindow.Centrifuge);
     register("rock_crusher", "Rock Crusher", NCWindow.RockCrusher);
-    var FissionRecipeType = /** @class */ (function (_super) {
+    var FissionRecipeType = (function (_super) {
         __extends(FissionRecipeType, _super);
         function FissionRecipeType() {
             var winMaker = new NCWindowMaker("Fission Reactor", 176, 97, "nc.frame_dark_bold")
@@ -4066,7 +3982,7 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
         };
         return FissionRecipeType;
     }(RecipeType));
-    var DecayGeneratorRecipeType = /** @class */ (function (_super) {
+    var DecayGeneratorRecipeType = (function (_super) {
         __extends(DecayGeneratorRecipeType, _super);
         function DecayGeneratorRecipeType() {
             var winMaker = new NCWindowMaker("Decay Generator", 176, 86)
@@ -4096,7 +4012,7 @@ ModAPI.addAPICallback("RecipeViewer", function (api) {
         };
         return DecayGeneratorRecipeType;
     }(RecipeType));
-    var FurnaceFuelRecipeType = /** @class */ (function (_super) {
+    var FurnaceFuelRecipeType = (function (_super) {
         __extends(FurnaceFuelRecipeType, _super);
         function FurnaceFuelRecipeType() {
             var _this = _super.call(this, "Nuclear Furnace Fuel", NCID.furnace, {

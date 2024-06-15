@@ -16,8 +16,8 @@ class FissionMaterial {
     }
 
     static createWithIsotope(symbol: string, name: string, ...nums: number[]): void {
-        for(let i = 0; i < nums.length; i++){
-            this.createWithOxide(symbol + nums[i], name + "-" + nums[i]);
+        for(const num of nums){
+            this.createWithOxide(symbol + num, name + "-" + num);
         }
     }
 
